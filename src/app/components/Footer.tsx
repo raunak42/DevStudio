@@ -57,13 +57,13 @@ export const Footer = () => {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 px-4 py-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500 text-white"
+                  className="flex-1 px-4 py-2 rounded-xl bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500 text-white"
                   required
                 />
-                <div className="w-[200px] flex items-center justify-center" >
+                <div className="w-[200px] flex items-center justify-center">
                   <Button
                     type="submit"
-                    className="w-[200px] active:w-[180px] px-6 py-2 bg-gradient-to-r from-yellow-400 to-pink-500 text-white rounded hover:bg-blue-700 transition-colors font-bold"
+                    className="w-[200px] active:w-[180px] px-6 py-2 bg-gradient-to-r from-yellow-400 to-pink-500 text-white hover:bg-blue-700 transition-colors font-bold"
                   >
                     Subscribe
                   </Button>

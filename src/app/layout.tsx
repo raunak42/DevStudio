@@ -25,20 +25,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Providers>
-      <html lang="en">
-        <body className={cn(switzer.className, "antialiased")}>
+    <html lang="en">
+      <body className={cn(switzer.className, "antialiased")}>
+        <Providers>
           {/* <SignedOut>
             <SignInButton />
-          </SignedOut> */}
+            </SignedOut> */}
           <SignedIn>
             <UserButton />
           </SignedIn>
-          <Navbar/>
+          <Navbar />
           <main>{children}</main>
-          <Footer/>
-        </body>
-      </html>
-    </Providers>
+          <Footer />
+        </Providers>
+      </body>
+    </html>
   );
 }
