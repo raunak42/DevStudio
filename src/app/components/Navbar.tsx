@@ -39,7 +39,7 @@ export const Navbar: React.FC = () => {
           Sign In
         </a>
         <div className="w-[140px] flex items-center justify-center" >
-          <Button className="w-[140px] active:w-[120px] bg-orange-400 text-white font-semibold transition-all">
+          <Button className="w-[140px] active:w-[120px] bg-gradient-to-t from-orange-400 to-[#fcd076] text-white font-semibold transition-all">
             Dashboard
             <TiArrowSortedUp className="rotate-90" size={20} />
           </Button>
