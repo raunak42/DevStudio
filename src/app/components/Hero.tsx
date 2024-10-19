@@ -1,9 +1,13 @@
+"use client";
 import Image from "next/image";
 import { Button } from "./Button";
 import HeroCode from "./HeroCode";
 import { code } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 
 export function Hero() {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col items-center justify-start gap-4">
       <div className="absolute h-screen w-screen flex items-start justify-center z-0">
@@ -12,7 +16,6 @@ export function Hero() {
           src={"/backgrounds/blob.svg"}
           width={1000}
           height={1000}
-          className="bg-black"
         />
       </div>
       <h1 className="text-6xl font-bold text-center mt-16 w-[60%] z-10 text-[#001f3f]">
@@ -29,7 +32,10 @@ export function Hero() {
         that turns your ideas into reality, anywhere, anytime
       </h2>
       <div className="h-[60px] z-10 flex items-center justify-center">
-        <Button className="bg-gradient-to-t z-10 from-[#001f3f] to-[#3b5f85] w-[200px] active:w-[180px] font-semibold">
+        <Button
+          onClick={() => router.push("/signup")}
+          className="bg-gradient-to-t z-10 from-[#001f3f] to-[#3b5f85] w-[200px] active:w-[180px] font-semibold"
+        >
           Get Started
         </Button>
       </div>
