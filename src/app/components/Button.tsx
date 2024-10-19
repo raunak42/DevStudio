@@ -34,7 +34,7 @@ export const Button: React.FC<ButtonProps> = ({
       onClick={handleClick}
       disabled={loading}
       className={cn(
-        "bg-black rounded-xl w-[300px] h-[40px] text-white flex items-center justify-center transition-opacity ",
+        "bg-black rounded-xl w-[300px] h-[40px] text-white flex items-center justify-center transition-all duration-100 active:w-[280px] active:h-[36px] active:text-sm text-base",
         className,
         {
           "opacity-70": loading,
