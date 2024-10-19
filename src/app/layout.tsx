@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(switzer.className, "antialiased")}>
+      <body className={cn(switzer.className, "antialiased overflow-x-clip")}>
         <Providers>
           {/* <SignedOut>
             <SignInButton />
