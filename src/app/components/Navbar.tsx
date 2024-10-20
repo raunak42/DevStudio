@@ -18,10 +18,10 @@ export const Navbar: React.FC = () => {
         <Link href={"/"} className="flex items-center gap-2">
           <BsWindowSidebar
             strokeWidth={0.3}
-            className="text-[#001f3f]"
+            className="text-[#204e7d]"
             size={28}
           />
-          <h1 className="text-2xl font-bold text-[#001f3f]">DevStudio</h1>
+          <h1 className="text-2xl font-bold text-[#204e7d]">DevStudio</h1>
         </Link>
 
         <div className="h-6 w-px bg-gray-300 mx-4" />
@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
                 clicked: true,
               });
             }}
-            className="hover:text-[#001f3f] transition-colors cursor-pointer"
+            className="hover:text-[#204e7d] transition-colors cursor-pointer"
           >
             Features
           </h1>
@@ -62,7 +62,7 @@ export const Navbar: React.FC = () => {
         <div className="w-[140px] flex items-center justify-center">
           <Button onClick={()=>router.push("/signin")} className="w-[140px] active:w-[120px] bg-gradient-to-t from-orange-400 to-[#fcd076] text-white font-semibold transition-all">
             Dashboard
-            <TiArrowSortedUp className="rotate-90" size={20} />
+            <TiArrowSortedUp className="rotate-90" size={16} />
           </Button>
         </div>
       </div>

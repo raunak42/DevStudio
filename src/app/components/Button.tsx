@@ -34,14 +34,14 @@ export const Button: React.FC<ButtonProps> = ({
       onClick={handleClick}
       disabled={loading}
       className={cn(
-        "bg-black rounded-xl w-[300px] h-[40px] text-white flex items-center justify-center transition-all duration-100 active:w-[280px] active:h-[36px] active:text-sm text-base",
+        "bg-black hover:opacity-70 rounded-xl w-[300px] h-[40px] text-white flex items-center justify-center transition-all duration-100 active:w-[280px] active:h-[36px] active:text-sm text-base",
         className,
         {
           "opacity-70": loading,
         }
       )}
     >
-      {loading ? <Loader className="w-6 h-6 animate-spin" /> : children}
+      {loading ? <Loader size={16} className=" animate-spin" /> : children}
     </button>
   );
 };

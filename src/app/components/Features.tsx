@@ -5,7 +5,7 @@ import { BsTerminal, BsWindow } from "react-icons/bs";
 import { FiCloud, FiZap } from "react-icons/fi";
 import { VscSymbolMethod } from "react-icons/vsc";
 
-interface FeaturesProps extends HTMLAttributes<HTMLElement> {}
+type FeaturesProps = HTMLAttributes<HTMLElement> 
 
 export const Features = forwardRef<HTMLElement, FeaturesProps>(
   ({ className, ...props }, ref) => {
@@ -16,7 +16,7 @@ export const Features = forwardRef<HTMLElement, FeaturesProps>(
         className={cn("w-full py-24 bg-transparent z-10", className)}
       >
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center text-[#001f3f] mb-4">
+          <h2 className="text-4xl font-bold text-center text-[#204e7d] mb-4">
             Everything you need to code
             <span className="bg-gradient-to-r from-yellow-400 to-pink-500 text-transparent bg-clip-text">
               {" "}
@@ -75,7 +75,7 @@ export const Features = forwardRef<HTMLElement, FeaturesProps>(
                 <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-500 mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-[#001f3f] mb-2">
+                <h3 className="text-xl font-semibold text-[#204e7d] mb-2">
                   {feature.title}
                 </h3>
                 <p className="text-gray-600">{feature.description}</p>

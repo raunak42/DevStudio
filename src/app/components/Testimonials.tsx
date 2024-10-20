@@ -1,14 +1,15 @@
 import { forwardRef, HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
-interface TestimonialsProps extends HTMLAttributes<HTMLElement> {}
+type TestimonialsProps = HTMLAttributes<HTMLElement> 
 
 export const Testimonials = forwardRef<HTMLElement, TestimonialsProps>(
   ({className, ...props}, ref) => {
     return (
       <section {...props} ref={ref} className={cn("w-full py-24 z-10",className)}>
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center text-[#001f3f] mb-4">
+          <h2 className="text-4xl font-bold text-center text-[#204e7d] mb-4">
             Loved by developers
             <span className="bg-gradient-to-r from-yellow-400 to-pink-500 text-transparent bg-clip-text">
               {" "}
@@ -58,13 +59,15 @@ export const Testimonials = forwardRef<HTMLElement, TestimonialsProps>(
                 className="bg-white p-8 rounded-lg border border-gray-200 hover:border-orange-400 transition-all hover:shadow-lg"
               >
                 <div className="flex items-start gap-4 mb-6">
-                  <img
+                  <Image
                     src={testimonial.image}
                     alt={testimonial.name}
-                    className="w-16 h-16 rounded-full"
+                    className=" rounded-full"
+                    width={42}
+                    height={42}
                   />
                   <div>
-                    <h3 className="font-semibold text-[#001f3f]">
+                    <h3 className="font-semibold text-[#204e7d]">
                       {testimonial.name}
                     </h3>
                     <p className="text-gray-600 text-sm">{testimonial.role}</p>

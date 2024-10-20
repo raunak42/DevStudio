@@ -18,7 +18,7 @@ export function Hero() {
           height={1000}
         />
       </div>
-      <h1 className="text-6xl font-bold text-center mt-16 w-[60%] z-10 text-[#001f3f]">
+      <h1 className="text-6xl font-bold text-center mt-16 w-[60%] z-10 text-[#204e7d]">
         Build your most ambitious projects with{" "}
         <span className="bg-gradient-to-r from-yellow-400 to-pink-500 text-transparent bg-clip-text">
           DevStudio

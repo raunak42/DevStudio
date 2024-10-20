@@ -10,7 +10,9 @@ interface ProvidersProps {
 export const Providers: React.FC<ProvidersProps> = ({ children }) => {
   return (
     <RecoilRoot>
-      <ClerkProvider>{children}</ClerkProvider>
+      <ClerkProvider>
+        <main>{children}</main>
+      </ClerkProvider>
     </RecoilRoot>
   );
 };
