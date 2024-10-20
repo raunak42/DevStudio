@@ -5,6 +5,7 @@ import { Hero } from "../components/Hero";
 import { useRecoilState } from "recoil";
 import { ScrollToState } from "@/store";
 import { useEffect, useRef } from "react";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const featuresRef = useRef<HTMLElement>(null);
@@ -16,20 +17,20 @@ export default function Home() {
       const scrollToSection = async () => {
         try {
           if (scrollTo.section === "features") {
-            await featuresRef.current?.scrollIntoView({ 
+            await featuresRef.current?.scrollIntoView({
               behavior: "smooth",
-              block: "start" 
+              block: "start",
             });
           } else if (scrollTo.section === "testimonials") {
-            await testimonialsRef.current?.scrollIntoView({ 
+            await testimonialsRef.current?.scrollIntoView({
               behavior: "smooth",
-              block: "start" 
+              block: "start",
             });
           }
           // Reset scroll state after animation completes
           setScrollTo({ clicked: false, section: "" });
         } catch (error) {
-          console.error('Error scrolling:', error);
+          console.error("Error scrolling:", error);
         }
       };
 
@@ -42,6 +43,7 @@ export default function Home() {
       <Hero />
       <Features ref={featuresRef} />
       <Testimonials ref={testimonialsRef} />
+      <Footer />
     </div>
   );
 }
