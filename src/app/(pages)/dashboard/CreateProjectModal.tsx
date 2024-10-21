@@ -30,7 +30,6 @@ const CreateProjectModal = ({
   useEffect(() => {
     const slug = generateSlug(3, { format: "camel" });
     setTitle(slug);
-    setTemplate(templates[0]);
   }, [showModal]);
 
   const handleSend = async () => {
@@ -51,10 +50,11 @@ const CreateProjectModal = ({
     });
 
     const data = await response.json();
-    console.log(data);
 
-    const params = new URLSearchParams({ userId: user.id, projectId });
-
+    const params = new URLSearchParams({
+      userId: data.userId,
+      projectId: data.projectId,
+    });
     router.push(`/project?${params}`);
   };
 
