@@ -10,6 +10,7 @@ import { useUser } from "@clerk/nextjs";
 import { createProjectProps } from "@/app/api/createProject/route";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { API_BASE_URL } from "@/lib/constants";
 
 interface CreateProjectModalProps {
   showModal: boolean;
@@ -43,9 +44,12 @@ const CreateProjectModal = ({
       projectId: projectId,
     };
 
-    const response = await fetch("/api/createProject", {
+    const response = await fetch(`${API_BASE_URL}/createProject`, {
       method: "POST",
       cache: "no-store",
+      headers: {
+        "content-type": "application/json", //necessary to communicate with the express server.
+      },
       body: JSON.stringify(body),
     });
 
