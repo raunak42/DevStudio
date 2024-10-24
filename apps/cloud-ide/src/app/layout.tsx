@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Providers } from "./components/Providers";
+import { Providers } from "../components/Providers";
 import { cn } from "@/lib/utils";
-import { Navbar } from "./components/Navbar";
+import { Navbar } from "../components/Navbar";
 import { currentUser } from "@clerk/nextjs/server";
-import { SessionNavbar } from "./components/SessionNavbar";
+import { SessionNavbar } from "../components/SessionNavbar";
 
 const switzer = localFont({
   src: "../../public/fonts/Switzer-Variable.woff2",

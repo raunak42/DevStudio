@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/app/components/Button";
+import { Button } from "@/components/Button";
 import { Dispatch, SetStateAction } from "react";
 import { IoIosAdd } from "react-icons/io";
 

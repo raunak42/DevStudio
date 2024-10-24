@@ -1,11 +1,11 @@
 "use client";
-import { Testimonials } from "../components/Testimonials";
-import { Features } from "../components/Features";
-import { Hero } from "../components/Hero";
+import { Testimonials } from "../../components/Testimonials";
+import { Features } from "../../components/Features";
+import { Hero } from "../../components/Hero";
 import { useRecoilState } from "recoil";
 import { ScrollToState } from "@/store";
 import { useEffect, useRef } from "react";
-import Footer from "../components/Footer";
+import Footer from "../../components/Footer";
 
 export default function Home() {
   const featuresRef = useRef<HTMLElement>(null);

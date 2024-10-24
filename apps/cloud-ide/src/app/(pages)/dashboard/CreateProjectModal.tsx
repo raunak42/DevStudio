@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
-import { Button } from "../../components/Button";
+import { Button } from "../../../components/Button";
 import { IoIosAdd } from "react-icons/io";
 import { generateSlug } from "random-word-slugs";
 import { IoIosCheckmarkCircle } from "react-icons/io";
