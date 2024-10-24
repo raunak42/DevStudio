@@ -12,6 +12,10 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      height: {
+        'screen-minus-nav': 'calc(100vh - 65px)',
+      },
+
     },
   },
   plugins: [],
