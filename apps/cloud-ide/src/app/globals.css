@@ -2,3 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+.xterm {
+  height: 100%;
+}
+.xterm-screen {
+  height: 100% !important;
+}
+
+/* Custom styles for horizontal scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 5px;  /* For horizontal scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+}
+
+/* Default styles for vertical scrollbars */
+*:not(.custom-scrollbar)::-webkit-scrollbar {
+  width: 12px;  /* Default width for vertical scrollbars */
+}
+
+*:not(.custom-scrollbar)::-webkit-scrollbar-track {
+  background: #f1f1f1;  /* Default track color */
+}
+
+*:not(.custom-scrollbar)::-webkit-scrollbar-thumb {
+  background: #d1d5db;  /* Default thumb color */
+}
+
+*:not(.custom-scrollbar)::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;  /* Default hover color */
+}
