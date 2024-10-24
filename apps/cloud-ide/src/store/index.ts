@@ -7,3 +7,11 @@ export const ScrollToState = atom({
         clicked: false
     },
 })
+
+export const CloseTermState = atom({
+    key: "CloseTermState",
+    default: {
+        terminalId: "",
+        close: false
+    }
+})
