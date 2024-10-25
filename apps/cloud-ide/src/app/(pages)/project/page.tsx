@@ -7,9 +7,9 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { HiOutlineMinus } from "react-icons/hi2";
 import { PiSpinnerLight } from "react-icons/pi";
 import { TerminalPanel } from "@/components/TerminalPanel";
-import { FilePanel } from "@/components/FilePanel";
 import { CodePanel } from "@/components/CodePanel";
 import { WebViewPanel } from "@/components/WebViewPanel";
+import { FilePanel, FilePanelProps } from "@/components/FilePanel";
 
 export interface Terminal {
   terminalId: string;
@@ -20,6 +20,9 @@ export default function Page() {
   const [terminals, setTerminals] = useState<Terminal[]>([]);
   const [activeTerminalId, setActiveTerminalId] = useState<string>("");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [rootContent, setRootContent] = useState<
+    FilePanelProps["entities"] | null
+  >(null);
 
   const params = useSearchParams();
   const userId = params.get("userId");
@@ -52,8 +55,8 @@ export default function Page() {
   useEffect(() => {
     if (!socket) return;
     socket.on("files-loaded", (data) => {
-      console.log(data);
-      if (data === true) {
+      if (data.loaded === true) {
+        setRootContent(data.rootContent)
         addNewTerminal();
       }
     });
@@ -78,7 +81,7 @@ export default function Page() {
     }
   }, [terminals]);
 
-  if (!activeTerminalId) {
+  if (!rootContent) {
     return (
       <div className="h-screen-minus-nav w-screen flex flex-col items-center justify-start mt-64 gap-2">
         <PiSpinnerLight
@@ -93,7 +96,7 @@ export default function Page() {
   return (
     <div className="h-screen-minus-nav">
       <PanelGroup direction="horizontal">
-        <FilePanel />
+        <FilePanel entities={rootContent} socket={socket}/>
         <PanelResizeHandle className="group flex flex-col items-center justify-center  group  w-[4px] bg-gray-200">
           <HiOutlineMinus
             className="stroke-[1px] text-gray-400 group-hover:text-gray-800 rotate-90"
