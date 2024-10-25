@@ -11,7 +11,7 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import "@xterm/xterm/css/xterm.css";
 import { terminalThemes } from "@/lib/terminalThemes";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { CloseTermState } from "@/store";
 
 interface WebTerminalProps extends HTMLAttributes<HTMLElement> {
@@ -29,22 +29,21 @@ export const WebTerminal: React.FC<WebTerminalProps> = ({
   const [term, setTerm] = useState<Terminal | null>(null);
   const [theme, setTheme] = useState({});
   const [fitAddon, setFitAddon] = useState<FitAddon | null>(null);
-  const [closeTerm, setCloseTerm] = useRecoilState(CloseTermState);
+  const closeTerm = useRecoilValue(CloseTermState);
 
-  const closeTerminal = () => {
+  const closeTerminal = useCallback(() => {
     if (term) {
       term.dispose();
       socket.emit("closeTerminal", terminalId);
     }
     setTerm(null);
-  };
+  }, [socket, term, terminalId]);
 
   useEffect(() => {
-    console.log(closeTerm.terminalId, terminalId);
     if (closeTerm.terminalId === terminalId && closeTerm.close === true) {
       closeTerminal();
     }
-  }, [closeTerm]);
+  }, [closeTerm, closeTerminal, terminalId]);
 
   // Handle terminal resize
   const handleTerminalResize = useCallback(() => {
