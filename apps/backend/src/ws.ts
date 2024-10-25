@@ -3,6 +3,7 @@ import { type Server as HttpServer } from "http";
 import { spawn } from "node-pty";
 import { fetchS3Folder } from "./aws";
 import path from "path"
+import { fetchDir } from "./fs";
 
 interface Terminal {
     ptyProcess: ReturnType<typeof spawn>;
@@ -26,8 +27,9 @@ export const socketHandler = (httpServer: HttpServer) => {
         const workspaceLocation = path.join(__dirname, `../workspace/${projectId.split("-")[1]}`)
         initEventHandlers(socket, workspaceLocation)
         const res = await fetchS3Folder(`user/${userId}/${projectId}`, workspaceLocation);
-        if (res.message === "Download completed successfully") {
-            socket.emit("files-loaded", true)
+        if (res.status === 200) {
+            const rootContent = await fetchDir(workspaceLocation, "")
+            socket.emit("files-loaded", ({ rootContent, loaded: true }))
         }
     });
 
@@ -36,7 +38,7 @@ export const socketHandler = (httpServer: HttpServer) => {
 const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
     let terminals: Terminal[] = []
     const SHELL = "bash"
-    
+
     socket.on("requestPty", (terminalId: string) => {
         console.log("Terminal requested.")
         const ptyProcess = spawn(SHELL, [], {
@@ -69,6 +71,12 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
         terminal.ptyProcess.write(input)
     });
 
+    socket.on("getDirContents", async (dirPath: string, callBack) => {
+        const rootContent = await fetchDir(`${workspaceLocation}/${dirPath}`, "")
+        console.log("rootContent", rootContent)
+        callBack(rootContent)
+    })
+
     socket.on("closeTerminal", (terminalId: string) => {
         const terminal = terminals.find((t) => t.id === terminalId);
         if (!terminal) return;
@@ -84,5 +92,9 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
         })
         terminals = []
         console.log("A client disconnected from", socket.id);
+
+
+        ///////////////////////////////////////////////
+        //Add logic to clean up app the files when the user disconnects.
     });
 }
