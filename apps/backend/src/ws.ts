@@ -4,6 +4,7 @@ import { spawn } from "node-pty";
 import { fetchS3Folder } from "./aws";
 import path from "path"
 import { fetchDir } from "./fs";
+import { watchDirectory } from "./watcher";
 
 interface Terminal {
     ptyProcess: ReturnType<typeof spawn>;
@@ -21,6 +22,8 @@ export const socketHandler = (httpServer: HttpServer) => {
 
     io.on("connection", async (socket: Socket) => {
         console.log("A client connected to", socket.id);
+        watchDirectory(path.join(__dirname, "..", "workspace"), socket);
+
         const userId = socket.handshake.query.userId
         const projectId = socket.handshake.query.projectId as string
 
@@ -32,7 +35,6 @@ export const socketHandler = (httpServer: HttpServer) => {
             socket.emit("files-loaded", ({ rootContent, loaded: true }))
         }
     });
-
 }
 
 const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
@@ -72,9 +74,8 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
     });
 
     socket.on("getDirContents", async (dirPath: string, callBack) => {
-        const rootContent = await fetchDir(`${workspaceLocation}/${dirPath}`, "")
-        console.log("rootContent", rootContent)
-        callBack(rootContent)
+        const content = await fetchDir(`${workspaceLocation}/${dirPath}`, "")
+        callBack(content)
     })
 
     socket.on("closeTerminal", (terminalId: string) => {
