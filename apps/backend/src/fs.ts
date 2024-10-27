@@ -7,10 +7,10 @@ interface Entry { //File system entry is the common name for files and directori
 }
 
 export const fetchDir = async (dir: string, baseDir: string): Promise<Entry[]> => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         fs.readdir(dir, { withFileTypes: true }, (err, entries) => {
             if (err) {
-                reject(err)
+                console.error(err)
             }
             else {
                 resolve(entries.map((entry) => {
@@ -31,7 +31,7 @@ export const fetchFileContent = async (file: string): Promise<string> => {
         fs.readFile(file, "utf8", (err, data) => {
             if (err) {
                 reject(err)
-            }else{
+            } else {
                 resolve(data)
             }
         })
