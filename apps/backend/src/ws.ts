@@ -1,11 +1,10 @@
-import { Server, Socket } from "socket.io"
+import { Server, Socket } from "socket.io";
 import { type Server as HttpServer } from "http";
 import { spawn } from "node-pty";
 import { fetchS3Folder } from "./aws";
-import path from "path"
+import path from "path";
 import { fetchDir } from "./fs";
 import { watchDirectory } from "./watcher";
-import os from 'os';
 import { newPtyProcess, skipInitOutputs, writeInitCommands } from "./terminal";
 
 export interface Terminal {

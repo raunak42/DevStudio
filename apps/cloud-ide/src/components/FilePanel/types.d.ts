@@ -9,12 +9,13 @@ export interface EntityConponentProps {
     setAllEntities: Dispatch<SetStateAction<entity[]>>;
 }
 
-export type entity = {
+export interface entity {
     type: "dir" | "file";
     name: string;
     path: string;
-    children: entity[];
-};
+    children?: entity[];
+    dirOpenState?: boolean
+}
 
 export interface getRootContentsProps {
     socket: Socket | null;
@@ -46,5 +47,4 @@ export interface useWatcherProps {
     socket: Socket | null;
     entity: entity;
     setAllEntities: Dispatch<SetStateAction<entity[]>>;
-
 }
