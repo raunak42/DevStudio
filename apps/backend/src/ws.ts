@@ -5,8 +5,10 @@ import { fetchS3Folder } from "./aws";
 import path from "path"
 import { fetchDir } from "./fs";
 import { watchDirectory } from "./watcher";
+import os from 'os';
+import { newPtyProcess, skipInitOutputs, writeInitCommands } from "./terminal";
 
-interface Terminal {
+export interface Terminal {
     ptyProcess: ReturnType<typeof spawn>;
     id: string
 }
@@ -38,33 +40,26 @@ export const socketHandler = (httpServer: HttpServer) => {
 }
 
 const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
-    let terminals: Terminal[] = []
-    const SHELL = "bash"
+    let terminals: Terminal[] = [];
 
-    socket.on("requestPty", (terminalId: string) => {
-        console.log("Terminal requested.")
-        const ptyProcess = spawn(SHELL, [], {
-            name: "xterm-256color",
-            env: {
-                ...process.env,
-                npm_config_prefix: '',
-                SHELL: SHELL
-            },
-            cwd: workspaceLocation,
+    socket.on("requestPty", async (terminalId: string) => {
+        console.log("Terminal requested.");
 
-        });
+        const workspaceName = path.basename(workspaceLocation);
+
+        const ptyProcess = newPtyProcess(workspaceLocation)
+
+        await writeInitCommands(ptyProcess, workspaceName)
 
         const newTerminal: Terminal = {
             id: terminalId,
             ptyProcess: ptyProcess
-        }
-
+        };
         terminals.push(newTerminal);
+        
+        skipInitOutputs(newTerminal, socket)
 
-        newTerminal.ptyProcess.onData((data: string) => { //=== when ptyProcess produces output.
-            socket.emit("ptyOutput", { terminalId, data });
-        })
-        console.log(`Terminal-${terminalId} opened.`)
+        console.log(`Terminal-${terminalId} opened.`);
     });
 
     socket.on("keyEvent", ({ terminalId, input }: { terminalId: string; input: string }) => {
@@ -74,6 +69,7 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
     });
 
     socket.on("getDirContents", async (dirPath: string, callBack) => {
+        console.log(dirPath)
         const content = await fetchDir(`${workspaceLocation}/${dirPath}`, "")
         callBack(content)
     })
