@@ -19,7 +19,7 @@ export function watchDirectory(directoryPath: string, socket: Socket | null) {
     events.map((event) => {
         watcher.on(event, (path) => {
             const modifiedPath = modifyPath(path)
-            socket.emit("watcherEvent", modifiedPath)
+            socket.emit("watcherEvent", { path: modifiedPath, event })
         })
     })
 
