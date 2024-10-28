@@ -89,6 +89,9 @@ export const WebTerminal: React.FC<WebTerminalProps> = ({
       cursorBlink: true,
       fontSize: 14,
       theme: theme,
+      allowTransparency: true,
+      convertEol: true,
+      disableStdin: false,
     });
 
     const newFitAddon = new FitAddon();
