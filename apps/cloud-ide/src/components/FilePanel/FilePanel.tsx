@@ -47,7 +47,7 @@ const EntityComponent = ({
 }: EntityConponentProps) => {
   const [showOpen, setShowOpen] = useState<boolean>(false);
 
-  useWatcher({ //To handle ui changes if a entities are removed or added from the terminal.
+  useWatcher({ //To handle ui changes if entities are removed or added from the terminal.
     entity,
     setAllEntities,
     socket,

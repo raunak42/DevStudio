@@ -14,7 +14,6 @@ export interface entity {
     name: string;
     path: string;
     children?: entity[];
-    dirOpenState?: boolean
 }
 
 export interface getRootContentsProps {
