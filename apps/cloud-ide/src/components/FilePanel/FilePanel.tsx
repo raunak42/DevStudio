@@ -13,6 +13,7 @@ export interface FilePanelProps {
 
 export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
   const [allEntities, setAllEntities] = useState<entity[]>([]);
+  const [openFolders, setOpenFolders] = useState<string[]>([]);
 
   useEffect(() => {
     getRootContents({ socket, setAllEntities });
@@ -30,6 +31,8 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
               socket={socket}
               allEntities={allEntities}
               setAllEntities={setAllEntities}
+              openFolders={openFolders}
+              setOpenFolders={setOpenFolders}
             />
           );
         })}
@@ -44,24 +47,26 @@ const EntityComponent = ({
   socket,
   allEntities,
   setAllEntities,
+  openFolders,
+  setOpenFolders,
 }: EntityConponentProps) => {
-  const [showOpen, setShowOpen] = useState<boolean>(false);
-
-  useWatcher({ //To handle ui changes if entities are removed or added from the terminal.
+  useWatcher({
+    //To handle ui changes if entities are removed or added from the terminal.
     entity,
     setAllEntities,
-    socket,
+    socket,openFolders,setOpenFolders
   });
 
   const handleClick = () => {
     clickDir({
       entity,
       setAllEntities,
-      setShowOpen,
-      showOpen,
       socket,
+      openFolders,
+      setOpenFolders,
     });
   };
+  const isOpen = openFolders.includes(entity.path);
 
   return (
     <div
@@ -82,7 +87,7 @@ const EntityComponent = ({
       >
         {entity.type === "dir" ? (
           <>
-            {showOpen ? (
+            {isOpen ? (
               <FolderOpen className="shrink-0 stroke-[1.5px]" size={18} />
             ) : (
               <Folder className="shrink-0 stroke-[1.5px]" size={18} />
@@ -93,7 +98,7 @@ const EntityComponent = ({
         )}
         <h1 className="shrink-0 text-sm select-none">{entity.name}</h1>
       </div>
-      {showOpen === true &&
+      {isOpen === true &&
         entity.children?.map((entity, index) => {
           return (
             <EntityComponent
@@ -103,6 +108,8 @@ const EntityComponent = ({
               socket={socket}
               allEntities={allEntities}
               setAllEntities={setAllEntities}
+              openFolders={openFolders}
+              setOpenFolders={setOpenFolders}
             />
           );
         })}

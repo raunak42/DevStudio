@@ -126,18 +126,21 @@ export const getFreshData = async ({
     }
 };
 
+
 export const clickDir = ({
     entity,
     setAllEntities,
-    setShowOpen,
-    showOpen,
+    setOpenFolders,
+    openFolders,
     socket,
 }: clickDirProps) => {
     if (!socket || entity.type !== "dir") return;
 
-    setShowOpen(!showOpen)
-    
-    if (!showOpen) {
+    if (openFolders.includes(entity.path)) {
+        setOpenFolders((prev) => prev.filter((path) => path !== entity.path));
+    } else {
+        setOpenFolders((prev) => [...prev, entity.path]);
         getFreshData({ socket, entity, setAllEntities });
     }
 };
+

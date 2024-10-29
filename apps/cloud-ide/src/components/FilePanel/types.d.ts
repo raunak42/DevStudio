@@ -7,6 +7,8 @@ export interface EntityConponentProps {
     socket: Socket | null;
     allEntities: entity[];
     setAllEntities: Dispatch<SetStateAction<entity[]>>;
+    openFolders: string[];
+    setOpenFolders: Dispatch<SetStateAction<string[]>>
 }
 
 export interface entity {
@@ -24,9 +26,9 @@ export interface getRootContentsProps {
 export interface clickDirProps {
     socket: Socket | null;
     entity: entity;
-    showOpen: boolean;
-    setShowOpen: Dispatch<SetStateAction<boolean>>;
     setAllEntities: Dispatch<SetStateAction<entity[]>>;
+    openFolders: string[];
+    setOpenFolders: Dispatch<SetStateAction<string[]>>
 }
 
 export interface watcherAddDirProps {
@@ -46,4 +48,6 @@ export interface useWatcherProps {
     socket: Socket | null;
     entity: entity;
     setAllEntities: Dispatch<SetStateAction<entity[]>>;
+    openFolders: string[];
+    setOpenFolders: Dispatch<SetStateAction<string[]>>
 }

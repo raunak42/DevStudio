@@ -6,6 +6,8 @@ export const useWatcher = ({
   socket,
   entity,
   setAllEntities,
+  openFolders,
+  setOpenFolders,
 }: useWatcherProps) => {
   const handleWatcherEvent = useCallback(
     ({ path, event }: { path: string; event: string }) => {
@@ -36,9 +38,9 @@ export const useWatcher = ({
       if (isAncestor) {
         getFreshData({ socket, entity, setAllEntities });
       }
-      console.log(event)
+      console.log(event);
     },
-    [socket, entity, setAllEntities]
+    [socket, entity, setAllEntities, setOpenFolders]
   );
 
   useEffect(() => {
