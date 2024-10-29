@@ -68,7 +68,6 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
     });
 
     socket.on("getDirContents", async (dirPath: string, callBack) => {
-        console.log(dirPath)
         const content = await fetchDir(`${workspaceLocation}/${dirPath}`, "")
         callBack(content)
     })

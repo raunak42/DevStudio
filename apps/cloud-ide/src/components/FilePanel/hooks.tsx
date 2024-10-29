@@ -36,6 +36,7 @@ export const useWatcher = ({
       if (isAncestor) {
         getFreshData({ socket, entity, setAllEntities });
       }
+      console.log(event)
     },
     [socket, entity, setAllEntities]
   );
