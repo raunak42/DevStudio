@@ -29,17 +29,17 @@
 
 /* Default styles for vertical scrollbars */
 *:not(.custom-scrollbar)::-webkit-scrollbar {
-  width: 12px;  /* Default width for vertical scrollbars */
+  width: 10px;  /* Default width for vertical scrollbars */
 }
 
 *:not(.custom-scrollbar)::-webkit-scrollbar-track {
-  background: #f1f1f1;  /* Default track color */
+  background: #f9fafb;  /* Default track color */
 }
 
 *:not(.custom-scrollbar)::-webkit-scrollbar-thumb {
-  background: #d1d5db;  /* Default thumb color */
+  background: #e5e7eb;  /* Default thumb color */
 }
 
 *:not(.custom-scrollbar)::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;  /* Default hover color */
+  background: #d9dade;  /* Default hover color */
 }
