@@ -47,12 +47,12 @@ export const getRootContents = async ({
                 const updatedContents = entityContents.map(newEntity => {
                     const prevEntity = prevEntityMap.get(newEntity.path);
                     if (prevEntity?.children) {
-                        return { ...newEntity, children: prevEntity.children };
+                        return { ...newEntity, children: sortEntities(prevEntity.children) };
                     }
                     return newEntity;
                 });
 
-                return updatedContents;
+                return sortEntities(updatedContents);
             });
         });
     } catch (error) {
@@ -96,14 +96,14 @@ export const getFreshData = async ({
                             const updatedChildren = entityContents.map(newChild => {
                                 const existingChild = prevEntityMap.get(`${entity.path}/${newChild.name}`);
                                 if (existingChild?.children) {
-                                    return { ...newChild, children: existingChild.children };
+                                    return { ...newChild, children: sortEntities(existingChild.children) };
                                 }
                                 return newChild;
                             });
 
                             return {
                                 ...prevEntity,
-                                children: updatedChildren,
+                                children: sortEntities(updatedChildren),
                             };
                         }
 
@@ -144,3 +144,23 @@ export const clickDir = ({
     }
 };
 
+export function sortEntities(entities: entity[]): entity[] {
+  // First, move all entities with names starting with "." to the end
+  const [regularEntities, hiddenEntities] = entities.reduce(
+    ([regular, hidden], entity) => {
+      if (entity.name.startsWith('.')) {
+        return [regular, [...hidden, entity]];
+      } else {
+        return [[...regular, entity], hidden];
+      }
+    },
+    [[] as entity[], [] as entity[]]
+  );
+
+  // Then, sort the remaining entities into directories and files, with dirs first
+  return [...regularEntities.sort((a, b) => {
+    if (a.type === 'dir' && b.type === 'file') return -1;
+    if (a.type === 'file' && b.type === 'dir') return 1;
+    return a.name.localeCompare(b.name);
+  }), ...hiddenEntities];
+}

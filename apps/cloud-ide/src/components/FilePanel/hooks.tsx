@@ -6,13 +6,13 @@ export const useWatcher = ({
   socket,
   entity,
   setAllEntities,
-  openFolders,
-  setOpenFolders,
 }: useWatcherProps) => {
   const handleWatcherEvent = useCallback(
-    ({ path, event }: { path: string; event: string }) => {
+    (data: { path: string; event: string }) => {
       if (!socket) return;
 
+      const path = data.path;
+      
       const pathArray = path.split("/").filter((t) => t !== "");
       const currentEntityPath = entity.path.split("/").filter((t) => t !== "");
       const parentDir = pathArray[pathArray.length - 2];
@@ -38,9 +38,8 @@ export const useWatcher = ({
       if (isAncestor) {
         getFreshData({ socket, entity, setAllEntities });
       }
-      console.log(event);
     },
-    [socket, entity, setAllEntities, setOpenFolders]
+    [socket, entity, setAllEntities]
   );
 
   useEffect(() => {
