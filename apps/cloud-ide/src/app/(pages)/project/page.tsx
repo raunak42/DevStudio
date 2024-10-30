@@ -5,11 +5,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { API_BASE_URL } from "@/lib/constants";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { HiOutlineMinus } from "react-icons/hi2";
-import { PiSpinnerLight } from "react-icons/pi";
 import { TerminalPanel } from "@/components/TerminalPanel";
 import { CodePanel } from "@/components/CodePanel";
 import { WebViewPanel } from "@/components/WebViewPanel";
 import { FilePanel } from "@/components/FilePanel/FilePanel";
+import Loading from "./loading";
 
 export interface Terminal {
   terminalId: string;
@@ -20,8 +20,8 @@ export default function Page() {
   const [terminals, setTerminals] = useState<Terminal[]>([]);
   const [activeTerminalId, setActiveTerminalId] = useState<string>("");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [filesLoaded,setFilesLoaded] = useState<boolean>(false)
-  
+  const [filesLoaded, setFilesLoaded] = useState<boolean>(false);
+
   const params = useSearchParams();
   const userId = params.get("userId");
   const projectId = params.get("projectId");
@@ -54,7 +54,7 @@ export default function Page() {
     if (!socket) return;
     socket.on("files-loaded", (data) => {
       if (data.loaded === true) {
-        setFilesLoaded(true)
+        setFilesLoaded(true);
         addNewTerminal();
       }
     });
@@ -80,21 +80,13 @@ export default function Page() {
   }, [terminals]);
 
   if (!filesLoaded) {
-    return (
-      <div className="h-screen-minus-nav w-screen flex flex-col items-center justify-start mt-64 gap-2">
-        <PiSpinnerLight
-          size={56}
-          strokeWidth={0.5}
-          className="animate-spin text-gray-600"
-        />
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
     <div className="h-screen-minus-nav">
       <PanelGroup direction="horizontal">
-        <FilePanel socket={socket}/>
+        <FilePanel socket={socket} />
         <PanelResizeHandle className="group flex flex-col items-center justify-center  group  w-[4px] bg-gray-200">
           <HiOutlineMinus
             className="stroke-[1px] text-gray-400 group-hover:text-gray-800 rotate-90"
