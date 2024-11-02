@@ -20,6 +20,10 @@ export const newPtyProcess = (workspaceLocation: string) => {
             CDPATH: '',
             npm_config_prefix: workspaceLocation,
             SHELL: SHELL,
+            // Disable bash history
+            HISTFILE: '/dev/null',
+            HISTSIZE: '0',
+            HISTFILESIZE: '0',
             // Unset any existing prompt settings
             PROMPT_COMMAND: '',
             PROMPT_DIRTRIM: '0',
