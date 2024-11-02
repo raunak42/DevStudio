@@ -13,7 +13,7 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       height: {
-        'screen-minus-nav': 'calc(100vh - 65px)',
+        'screen-minus-nav': 'calc(100vh - 48px)',
       },
 
     },

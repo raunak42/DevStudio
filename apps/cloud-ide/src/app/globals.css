@@ -11,11 +11,11 @@
 
 /* Custom styles for horizontal scrollbars */
 .custom-scrollbar::-webkit-scrollbar {
-  height: 5px;  /* For horizontal scrollbar */
+  height: 5px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -29,17 +29,29 @@
 
 /* Default styles for vertical scrollbars */
 *:not(.custom-scrollbar)::-webkit-scrollbar {
-  width: 10px;  /* Default width for vertical scrollbars */
+  width: 10px;
 }
 
 *:not(.custom-scrollbar)::-webkit-scrollbar-track {
-  background: #f9fafb;  /* Default track color */
+  background: transparent;  /* Changed to transparent */
 }
 
 *:not(.custom-scrollbar)::-webkit-scrollbar-thumb {
-  background: #e5e7eb;  /* Default thumb color */
+  background: #e5e7eb;
+  /* Optional: Add a border to make it look better on transparent background */
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 *:not(.custom-scrollbar)::-webkit-scrollbar-thumb:hover {
-  background: #d9dade;  /* Default hover color */
+  background: #d9dade;
+  background-clip: content-box;
+}
+
+
+.char-clamp {
+  width:80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
