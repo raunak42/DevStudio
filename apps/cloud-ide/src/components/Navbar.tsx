@@ -2,7 +2,8 @@
 import React from "react";
 import { Button } from "./Button";
 import { TiArrowSortedUp } from "react-icons/ti";
-import { BsWindowSidebar } from "react-icons/bs";
+import { PiReplitLogoFill } from "react-icons/pi";
+
 import { useSetRecoilState } from "recoil";
 import { ScrollToState } from "@/store";
 import { useRouter } from "next/navigation";
@@ -16,7 +17,7 @@ export const Navbar: React.FC = () => {
     <div className="h-16 w-full py-8 px-16 flex items-center justify-between z-20 border-b bg-white/80 backdrop-blur-sm">
       <div className="flex items-center gap-3">
         <Link href={"/"} className="flex items-center gap-2">
-          <BsWindowSidebar
+          <PiReplitLogoFill
             className="text-[#000000] stroke-[0.1px]"
             size={28}
           />
