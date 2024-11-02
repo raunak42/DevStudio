@@ -1,11 +1,10 @@
-import { cn } from "@/lib/utils";
-import { File, Folder, FolderOpen } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FilePlus, FolderPlus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Panel } from "react-resizable-panels";
 import { Socket } from "socket.io-client";
-import { entity, EntityConponentProps } from "./types";
-import { clickDir, getRootContents } from "./helpers";
-import { useWatcher } from "./hooks";
+import { entity } from "./types";
+import { getRootContents } from "./helpers";
+import { Entity } from "./Entity";
 
 export interface FilePanelProps {
   socket: Socket | null;
@@ -15,16 +14,90 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
   const [allEntities, setAllEntities] = useState<entity[]>([]);
   const [openFolders, setOpenFolders] = useState<string[]>([]);
 
+  const [newEntityName, setNewEntityName] = useState<string>("");
+  const [showInput, setShowInput] = useState<{
+    show: boolean;
+    inputFor: "dir" | "file" | "";
+  }>({
+    show: false,
+    inputFor: "",
+  });
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     getRootContents({ socket, setAllEntities });
   }, [socket]);
 
+  const handleSend = () => {
+    if (!socket || !showInput.inputFor || !showInput.show) return;
+    if (showInput.inputFor === "dir") {
+      socket.emit("addFolder", { folderName: newEntityName, atRoot: true });
+      setShowInput({ show: false, inputFor: "dir" });
+    } else if (showInput.inputFor === "file") {
+      socket.emit("addFile", { fileName: newEntityName, atRoot: true });
+      setShowInput({ show: false, inputFor: "dir" });
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node)
+      ) {
+        setShowInput({
+          inputFor: "",
+          show: false,
+        });
+      }
+    };
+
+    if (showInput.show === true) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showInput.show]);
+
   return (
-    <Panel className="bg-white">
-      <div className="flex flex-col h-full w-full overflow-y-scroll py-6">
+    <Panel
+      minSize={12}
+      className="bg-white flex flex-col items-center justify-start"
+    >
+      <div className="w-full flex items-center justify-between px-6 mt-4">
+        <h1 className="text-sm font-medium text-gray-800">Files</h1>
+        <div className="flex items-center justify-center gap-2 h-[32px]">
+          <div className="hover:bg-gray-100 cursor-pointer rounded-lg p-[6px]">
+            <FilePlus
+              onClick={() => {
+                setShowInput({
+                  show: true,
+                  inputFor: "file",
+                });
+              }}
+              size={17}
+              className="stroke-[1.4px] text-gray-700"
+            />
+          </div>
+          <div className="hover:bg-gray-100 cursor-pointer rounded-lg p-[6px] mt-[2px]">
+            <FolderPlus
+              onClick={() => {
+                setShowInput({
+                  show: true,
+                  inputFor: "dir",
+                });
+              }}
+              size={17}
+              className="stroke-[1.4px] text-gray-700 "
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col h-full w-full overflow-y-scroll pl-4 mt-2">
         {allEntities.map((entity, index) => {
           return (
-            <EntityComponent
+            <Entity
               key={index}
               entity={entity}
               depth={0}
@@ -36,83 +109,22 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
             />
           );
         })}
+        {showInput.show && (
+          <input
+            ref={inputRef}
+            autoFocus
+            onChange={(e) => {
+              setNewEntityName(e.currentTarget.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSend();
+              }
+            }}
+            className="w-[90%] h-[28px] outline-none rounded-md border-[1.5px] px-[10px] text-sm mt-[4px] focus-within:border-green-400"
+          ></input>
+        )}
       </div>
     </Panel>
-  );
-};
-
-const EntityComponent = ({
-  entity,
-  depth,
-  socket,
-  allEntities,
-  setAllEntities,
-  openFolders,
-  setOpenFolders,
-}: EntityConponentProps) => {
-  useWatcher({
-    //To handle ui changes if entities are removed or added from the terminal.
-    entity,
-    setAllEntities,
-    socket,openFolders,setOpenFolders
-  });
-
-  const handleClick = () => {
-    clickDir({
-      entity,
-      setAllEntities,
-      socket,
-      openFolders,
-      setOpenFolders,
-    });
-  };
-  const isOpen = openFolders.includes(entity.path);
-
-  return (
-    <div
-      className={cn(
-        `${depth === 0 && "ml-[0px]"}`,
-        `${depth === 1 && "ml-[36px]"}`,
-        `${depth > 1 && "ml-[12px]"}`,
-
-        "border-l border-gray-300"
-      )}
-    >
-      <div
-        onClick={handleClick}
-        className={cn(
-          "py-[4px] shrink-0 cursor-pointer w-full flex flex-row items-center justify-start gap-[6px] hover:bg-gray-200 ",
-          `${depth === 0 ? "px-8" : "px-2"}`
-        )}
-      >
-        {entity.type === "dir" ? (
-          <>
-            {isOpen ? (
-              <FolderOpen className="shrink-0 stroke-[1.5px]" size={18} />
-            ) : (
-              <Folder className="shrink-0 stroke-[1.5px]" size={18} />
-            )}
-          </>
-        ) : (
-          <File className="shrink-0 stroke-[1.5px]" size={18} />
-        )}
-        <h1 className="shrink-0 text-sm select-none">{entity.name}</h1>
-      </div>
-      {isOpen === true &&
-        entity.children?.map((entity, index) => {
-          return (
-            <EntityComponent
-              key={index}
-              entity={entity}
-              depth={depth + 1}
-              socket={socket}
-              allEntities={allEntities}
-              setAllEntities={setAllEntities}
-              openFolders={openFolders}
-              setOpenFolders={setOpenFolders}
-            />
-          );
-        })}
-    </div>
   );
 };
