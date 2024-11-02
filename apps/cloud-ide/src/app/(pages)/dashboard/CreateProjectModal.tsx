@@ -165,7 +165,7 @@ interface templateProps {
   description: string;
 }
 
-const templates: templateProps[] = [
+export const templates: templateProps[] = [
   {
     framework: "Node.js",
     logo: "/node.svg",
