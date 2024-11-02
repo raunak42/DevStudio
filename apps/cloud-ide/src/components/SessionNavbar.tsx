@@ -1,22 +1,44 @@
 "use client";
 import React from "react";
-import { PanelsTopLeft } from 'lucide-react';
-import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
+import { templates } from "@/app/(pages)/dashboard/CreateProjectModal";
+import { House } from "lucide-react";
+import { BiSolidRightArrow } from "react-icons/bi";
+import Image from "next/image";
+import { Button } from "./Button";
 
 export const SessionNavbar: React.FC = () => {
+  const params = useSearchParams();
+  const projectId = params.get("projectId");
+
+  if (!projectId) return;
+
+  const framework = projectId.split("-")[0];
+  const workspace = projectId.split("-")[1];
+  const logoSrc = templates.find((t) => t.framework === framework)!.logo;
+
   return (
-    <div className="h-16 w-full py-8 px-4 gap-16 flex items-center justify-between z-20 border-b bg-white/80 backdrop-blur-sm">
-      <Link href={"/"} className="flex items-center gap-2">
-        <PanelsTopLeft
-        // fill="#000000"
-        color="#000000"
-          className="text-[#000000] stroke-[1.4px]"
-          size={28}
-        />
-        <h1 className="text-2xl font-normal text-[#000000]">DevStudio</h1>
-      </Link>
-      <UserButton showName={true} />
+    <div className="h-12 w-full px-6 gap-16 grid grid-cols-3 z-20 border-b bg-white/80 backdrop-blur-sm">
+      <div className="flex items-center justify-start gap-4 col-span-1">
+        <House size={20} className="stroke-[1.5px] text-gray-800" />
+        <Image src={logoSrc} alt={framework} width={20} height={20} className="select-none" />
+        <h1 className="select-none text-sm text-gray-600 font-semibold">{workspace}</h1>
+      </div>
+      <div className=" col-span-1 flex items-center justify-center">
+        <Button className="flex items-center justify-center gap-1 bg-green-600 rounded-md w-[68px] h-[32px] active:w-[68px] active:h-[32px] group">
+          <BiSolidRightArrow
+            size={14}
+            className="text-green-200 group-hover:text-white"
+          />
+          <h1 className="text-sm text-green-200 group-hover:text-white font-semibold">
+            Run
+          </h1>
+        </Button>
+      </div>
+      <div className=" col-span-1 flex items-center justify-end">
+        <UserButton showName={true} />
+      </div>
     </div>
   );
 };
