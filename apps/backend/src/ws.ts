@@ -6,6 +6,7 @@ import path from "path";
 import { fetchDir } from "./fs";
 import { watchDirectory } from "./watcher";
 import { newPtyProcess, skipInitOutputs, writeInitCommands } from "./terminal";
+import fs from "fs"
 
 export interface Terminal {
     ptyProcess: ReturnType<typeof spawn>;
@@ -55,7 +56,7 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
             ptyProcess: ptyProcess
         };
         terminals.push(newTerminal);
-        
+
         skipInitOutputs(newTerminal, socket)
 
         console.log(`Terminal-${terminalId} opened.`);
@@ -67,10 +68,6 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
         terminal.ptyProcess.write(input)
     });
 
-    socket.on("getDirContents", async (dirPath: string, callBack) => {
-        const content = await fetchDir(`${workspaceLocation}/${dirPath}`, "")
-        callBack(content)
-    })
 
     socket.on("closeTerminal", (terminalId: string) => {
         const terminal = terminals.find((t) => t.id === terminalId);
@@ -78,6 +75,84 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
         terminal.ptyProcess.kill();
 
         console.log(`Terminal-${terminal.id} closed.`)
+    })
+
+    socket.on("getDirContents", async (dirPath: string, callBack) => {
+        const content = await fetchDir(`${workspaceLocation}/${dirPath}`, "")
+        callBack(content)
+    })
+
+    socket.on("addFile", ({ parentDir, fileName, atRoot }: { parentDir?: entity; fileName: string, atRoot?: boolean }) => {
+        if (!atRoot) {
+            if (!parentDir) return
+            const filePath = workspaceLocation + parentDir.path + `/${fileName}`
+            fs.writeFile(filePath, "", (err) => {
+                if (err) {
+                    console.error(`Error creating file: ${err}`);
+                } else {
+                    console.log(`File created successfully: ${filePath}`);
+                }
+            })
+        } else if (atRoot) {
+            const filePath = workspaceLocation + `/${fileName}`
+            fs.writeFile(filePath, "", (err) => {
+                if (err) {
+                    console.error(`Error creating file: ${err}`);
+                } else {
+                    console.log(`File created successfully: ${filePath}`);
+                }
+            })
+        }
+    })
+
+    socket.on("addFolder", ({ parentDir, folderName, atRoot }: { parentDir?: entity; folderName: string; atRoot?: boolean }) => {
+        if (!atRoot) {
+            if (!parentDir) return
+            const folderPath = workspaceLocation + parentDir.path + `/${folderName}`
+            console.log(folderPath)
+            fs.mkdir(folderPath, (err) => {
+                if (err) {
+                    console.error(`Error creating folder: ${err}`);
+                } else {
+                    console.log(`Folder created successfully: ${folderPath}`);
+                }
+            })
+        } else if (atRoot) {
+            const folderPath = workspaceLocation + `/${folderName}`
+            fs.mkdir(folderPath, (err) => {
+                if (err) {
+                    console.error(`Error creating folder: ${err}`);
+                } else {
+                    console.log(`Folder created successfully: ${folderPath}`);
+                }
+            })
+        }
+    })
+
+    socket.on("rename", ({ entity, newName }: { entity: entity; newName: string }) => {
+
+        const oldPath = workspaceLocation + entity.path
+        const oldPathArray = oldPath.split("/")
+        const newPathArray = [...oldPathArray.slice(0, -1), newName]
+        const newPath = newPathArray.join("/")
+
+        fs.renameSync(oldPath, newPath)
+    })
+
+    socket.on("delete", ({ entity }: { entity: entity }) => {
+        const path = workspaceLocation + entity.path
+
+        if (entity.type === "file") {
+            fs.unlink(path, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                } else {
+                    console.log('File deleted successfully!');
+                }
+            });
+        } else if (entity.type === "dir") {
+            fs.rmSync(path, { recursive: true, force: true });
+        }
     })
 
     socket.on("disconnect", () => {
@@ -92,4 +167,12 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
         ///////////////////////////////////////////////
         //Add logic to clean up app the files when the user disconnects.
     });
+}
+
+
+export interface entity {
+    type: "dir" | "file";
+    name: string;
+    path: string;
+    children?: entity[];
 }
