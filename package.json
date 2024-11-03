@@ -20,5 +20,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@aws-sdk/lib-storage": "^3.685.0"
+  }
 }
