@@ -128,7 +128,7 @@ export const WebTerminal: React.FC<WebTerminalProps> = ({
     };
   }, [socket, terminalId, theme]);
 
-  return <div {...props} className="w-full h-full" ref={terminalRef}></div>;
+  return <div {...props} className="w-full h-full pl-[4px]" ref={terminalRef}></div>;
 };
 
 enum ThemeName {

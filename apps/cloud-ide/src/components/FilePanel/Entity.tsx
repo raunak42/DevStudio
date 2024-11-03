@@ -83,8 +83,7 @@ export const Entity: React.FC<EntityConponentProps> = ({
         onClick={(e) => handleClick(e as unknown as MouseEvent)}
         onContextMenu={(e) => handleClick(e as unknown as MouseEvent)}
         className={cn(
-          "relative group h-[28px] shrink-0 cursor-pointer w-full flex flex-row items-center justify-between hover:bg-gray-100 rounded-md",
-          `${depth === 0 ? "px-2" : "px-2"}`
+          "relative group h-[28px] shrink-0 cursor-pointer w-full flex flex-row items-center justify-between hover:bg-[#86EFAC25] rounded-md pl-2",
         )}
         title={entity.name}
       >
@@ -94,12 +93,12 @@ export const Entity: React.FC<EntityConponentProps> = ({
               <>
                 {isOpen ? (
                   <FolderOpen
-                    className="shrink-0 stroke-[1.5px] text-gray-700"
+                    className="shrink-0 stroke-[1.8px] text-green-800"
                     size={17}
                   />
                 ) : (
                   <Folder
-                    className="shrink-0 stroke-[1.5px] text-gray-700"
+                    className="shrink-0 stroke-[1.8px] text-green-800"
                     size={17}
                   />
                 )}
@@ -112,17 +111,17 @@ export const Entity: React.FC<EntityConponentProps> = ({
               />
             )}
           </div>
-          <h1 className="text-sm select-none truncate text-gray-700">
+          <h1 className="text-sm select-none truncate text-green-700 font-normal">
             {entity.name}
           </h1>
         </div>
-        <div ref={buttonRef} className="w-[18px] flex-shrink-0">
+        <div ref={buttonRef} className="w-[32px] h-full flex-shrink-0 flex items-center justify-center rounded-r-md overflow-clip">
           <HiOutlineDotsVertical
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
             }}
-            className="size-4 hover:bg-gray-200 p-[2px] rounded-sm cursor-pointer hidden group-hover:block"
+            className="size-full hover:bg-[#86EFAC40] p-[7px] rounded-sm cursor-pointer hidden group-hover:block"
           />
         </div>
         {isMenuOpen && (

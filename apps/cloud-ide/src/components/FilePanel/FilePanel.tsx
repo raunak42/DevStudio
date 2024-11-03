@@ -63,12 +63,12 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
   return (
     <Panel
       minSize={12}
-      className="bg-white flex flex-col items-center justify-start"
+      className="bg-[#22C55E08] flex flex-col items-center justify-start"
     >
       <div className="w-full flex items-center justify-between px-6 mt-4">
-        <h1 className="text-sm font-medium text-gray-800">Files</h1>
-        <div className="flex items-center justify-center gap-2 h-[32px]">
-          <div className="hover:bg-gray-100 cursor-pointer rounded-lg p-[6px]">
+        <h1 className="text-base font-medium text-green-700">Files</h1>
+        <div className="flex items-center justify-center gap-1 h-[32px]">
+          <div className="hover:bg-[#86EFAC25] cursor-pointer rounded-lg p-[6px]">
             <FilePlus
               onClick={() => {
                 setShowInput({
@@ -77,10 +77,10 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
                 });
               }}
               size={17}
-              className="stroke-[1.4px] text-gray-700"
+              className="stroke-[1.6px] text-green-800"
             />
           </div>
-          <div className="hover:bg-gray-100 cursor-pointer rounded-lg p-[6px] mt-[2px]">
+          <div className="hover:bg-[#86EFAC25] cursor-pointer rounded-lg p-[6px] mt-[2px]">
             <FolderPlus
               onClick={() => {
                 setShowInput({
@@ -89,7 +89,7 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
                 });
               }}
               size={17}
-              className="stroke-[1.4px] text-gray-700 "
+              className="stroke-[1.6px] text-green-800 "
             />
           </div>
         </div>
@@ -121,7 +121,7 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
                 handleSend();
               }
             }}
-            className="w-[90%] h-[28px] outline-none rounded-md border-[1.5px] px-[10px] text-sm mt-[4px] focus-within:border-green-400"
+            className="text-green-700 w-[90%] h-[20px] outline-none rounded-md border-[1.5px] px-[10px] py-[10px] text-sm mt-[4px] focus-within:border-green-600"
           ></input>
         )}
       </div>

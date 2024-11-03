@@ -6,7 +6,7 @@ import { API_BASE_URL } from "@/lib/constants";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { HiOutlineMinus } from "react-icons/hi2";
 import { TerminalPanel } from "@/components/TerminalPanel";
-import { CodePanel } from "@/components/CodePanel";
+import { CodePanel } from "@/components/CodePanel/CodePanel";
 import { WebViewPanel } from "@/components/WebViewPanel";
 import { FilePanel } from "@/components/FilePanel/FilePanel";
 import Loading from "./loading";

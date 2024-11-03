@@ -10,7 +10,11 @@ interface EntityMenuProps {
   setIsMenuOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const EntityMenu: React.FC<EntityMenuProps> = ({ entity, socket,setIsMenuOpen }) => {
+export const EntityMenu: React.FC<EntityMenuProps> = ({
+  entity,
+  socket,
+  setIsMenuOpen,
+}) => {
   const isFolder = entity.type === "dir";
   const [isRenaming, setIsRenaming] = useState(false);
   const [isAddingFile, setIsAddingFile] = useState(false);
@@ -75,6 +79,7 @@ export const EntityMenu: React.FC<EntityMenuProps> = ({ entity, socket,setIsMenu
     <div className="px-3 py-2">
       <div className="flex items-center gap-1">
         <input
+          spellCheck={false}
           onFocus={(e) => e.target.select()}
           type="text"
           value={value}
@@ -109,7 +114,7 @@ export const EntityMenu: React.FC<EntityMenuProps> = ({ entity, socket,setIsMenu
   return (
     <div
       className={cn(
-        "w-[180px] bg-white border-[1px] border-gray-400 rounded-md shadow-lg py-1 select-none"
+        "w-[180px] bg-white border-[1px] border-gray-200 rounded-md shadow-lg select-none"
       )}
     >
       {/* Folder-specific options */}
@@ -131,7 +136,6 @@ export const EntityMenu: React.FC<EntityMenuProps> = ({ entity, socket,setIsMenu
               Add File
             </button>
           )}
-
           {isAddingFolder ? (
             renderInputField(
               newFolderName,
@@ -147,13 +151,11 @@ export const EntityMenu: React.FC<EntityMenuProps> = ({ entity, socket,setIsMenu
               <FolderPlus className="w-4 h-4 mr-2" />
               Add Folder
             </button>
-          )}
-
-          <div className="border-t border-gray-400 my-1"></div>
+          )}{" "}
         </>
       )}
 
-      <div className="space-y-1">
+      <div className="">
         {/* Rename section */}
         {isRenaming ? (
           renderInputField(
