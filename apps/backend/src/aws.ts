@@ -1,11 +1,51 @@
-import { CopyObjectCommand, ListObjectsV2Command, S3Client, type CopyObjectCommandInput, type ListObjectsV2CommandInput, GetObjectOutput, GetObjectCommandInput, GetObjectCommand } from '@aws-sdk/client-s3';
+import {
+    CopyObjectCommand,
+    ListObjectsV2Command,
+    S3Client,
+    type CopyObjectCommandInput,
+    type ListObjectsV2CommandInput,
+    GetObjectOutput,
+    GetObjectCommandInput,
+    GetObjectCommand, DeleteObjectCommand
+} from '@aws-sdk/client-s3';
+import { Upload, } from "@aws-sdk/lib-storage";
 import fs from "fs";
 import path from "path";
 
 
 const s3Client = new S3Client({
-    region: 'eu-central-1', // e.g., 'us-west-2'
+    region: 'eu-central-1',
 });
+
+export const addNewToS3 = async (path: string) => {
+    try {
+        const upload = new Upload({
+            client: s3Client,
+            params: {
+                Bucket: process.env.S3_BUCKET,
+                Key: path,
+                Body: "",
+            }
+        })
+
+        await upload.done()
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+export const deleteFromS3 = async (path: string) => {
+    try {
+        const params = {
+            Bucket: process.env.S3_BUCKET,
+            Key: path,
+        }
+        const deleteCommand = new DeleteObjectCommand(params)
+        await s3Client.send(deleteCommand)
+    } catch (error) {
+        console.error(error)
+    }
+}
 
 export const copyS3Folder = async (frameWork: string, userId: string, replId: string, continuationToken?: string) => {
     const bucket = process.env.S3_BUCKET
