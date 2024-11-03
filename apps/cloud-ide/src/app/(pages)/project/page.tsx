@@ -10,12 +10,16 @@ import { CodePanel } from "@/components/CodePanel";
 import { WebViewPanel } from "@/components/WebViewPanel";
 import { FilePanel } from "@/components/FilePanel/FilePanel";
 import Loading from "./loading";
+import { useRecoilValue } from "recoil";
+import { HomeClickedState } from "@/store";
 
 export interface Terminal {
   terminalId: string;
 }
 
 export default function Page() {
+  const homeButtonClicked = useRecoilValue(HomeClickedState);
+
   const [socket, setSocket] = useState<Socket | null>(null);
   const [terminals, setTerminals] = useState<Terminal[]>([]);
   const [activeTerminalId, setActiveTerminalId] = useState<string>("");
@@ -78,6 +82,13 @@ export default function Page() {
         scrollContainerRef.current.scrollWidth;
     }
   }, [terminals]);
+
+  useEffect(() => {
+    if (!socket) return;
+    if (homeButtonClicked) {
+      socket.disconnect();
+    }
+  }, [homeButtonClicked, socket]);
 
   if (!filesLoaded) {
     return <Loading />;
