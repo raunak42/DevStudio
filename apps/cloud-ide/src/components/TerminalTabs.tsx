@@ -67,7 +67,7 @@ export const TerminalTabs: React.FC<TerminalTabsProps> = ({
           >
             <div className="gap-[8px] flex flex-row items-center justify-start">
               <PiTerminalWindowLight size={20} />
-              <h1 className="text-xs font-normal  text-black">Shell</h1>
+              <h1 className="text-xs font-normal select-none text-black">Shell</h1>
             </div>
             <button
               onClick={(e) => handleClose(e, terminal)}
