@@ -6,7 +6,7 @@ import path from "path";
 import { fetchDir } from "./fs";
 import { watchDirectory } from "./watcher";
 import { newPtyProcess, skipInitOutputs, writeInitCommands } from "./terminal";
-import fs from "fs"
+import fs, { FSWatcher } from "fs"
 
 export interface Terminal {
     ptyProcess: ReturnType<typeof spawn>;
@@ -24,13 +24,13 @@ export const socketHandler = (httpServer: HttpServer) => {
 
     io.on("connection", async (socket: Socket) => {
         console.log("A client connected to", socket.id);
-        watchDirectory(path.join(__dirname, "..", "workspace"), socket);
+        const watcher = watchDirectory(path.join(__dirname, "..", "workspace"), socket);
 
         const userId = socket.handshake.query.userId
         const projectId = socket.handshake.query.projectId as string
 
         const workspaceLocation = path.join(__dirname, `../workspace/${projectId.split("-")[1]}`)
-        initEventHandlers(socket, workspaceLocation)
+        initEventHandlers(socket, workspaceLocation, watcher)
         const res = await fetchS3Folder(`user/${userId}/${projectId}`, workspaceLocation);
         if (res.status === 200) {
             const rootContent = await fetchDir(workspaceLocation, "")
@@ -39,7 +39,7 @@ export const socketHandler = (httpServer: HttpServer) => {
     });
 }
 
-const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
+const initEventHandlers = (socket: Socket, workspaceLocation: string, watcher: FSWatcher | undefined) => {
     let terminals: Terminal[] = [];
 
     socket.on("requestPty", async (terminalId: string) => {
@@ -109,7 +109,6 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
         if (!atRoot) {
             if (!parentDir) return
             const folderPath = workspaceLocation + parentDir.path + `/${folderName}`
-            console.log(folderPath)
             fs.mkdir(folderPath, (err) => {
                 if (err) {
                     console.error(`Error creating folder: ${err}`);
@@ -155,7 +154,7 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
         }
     })
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
         terminals.forEach((terminal) => {
             terminal.ptyProcess.kill();
             console.log(`${terminal.id} closed.`)
@@ -163,9 +162,9 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string) => {
         terminals = []
         console.log("A client disconnected from", socket.id);
 
-
-        ///////////////////////////////////////////////
-        //Add logic to clean up app the files when the user disconnects.
+        await closeWatcher(watcher!) //Watcher will not listen now, therefore the workspace won't be deleted from s3 when rmSync runs.
+        fs.rmSync(workspaceLocation, { recursive: true, force: true });
+        console.log("User's workspace removed from the system.")
     });
 }
 
@@ -175,4 +174,13 @@ export interface entity {
     name: string;
     path: string;
     children?: entity[];
+}
+
+const closeWatcher = async (watcher: FSWatcher) => {
+    await new Promise((resolve) => {
+        resolve(
+            watcher.close()
+        )
+        console.log("Watcher stopped.")
+    })
 }
