@@ -15,3 +15,8 @@ export const CloseTermState = atom({
         close: false
     }
 })
+
+export const HomeClickedState = atom<boolean>({
+    key:"HomeClickedState",
+    default:false
+})
