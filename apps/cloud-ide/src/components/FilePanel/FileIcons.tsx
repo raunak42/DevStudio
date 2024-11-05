@@ -3,6 +3,7 @@ import {
   DiPython, DiRuby, DiPhp, DiCss3, DiHtml5, DiDocker, DiGit, DiJava,
   DiSwift, DiAndroid, DiReact, DiVisualstudio, DiUnitySmall
 } from 'react-icons/di';
+import { PiGearFill } from "react-icons/pi";
 import { FaJsSquare } from "react-icons/fa";
 import { BiLogoTypescript } from "react-icons/bi";
 import {
@@ -26,10 +27,11 @@ interface IconLibraryConfig {
 const iconLibraryConfigs: { [key: string]: IconLibraryConfig } = {
   Di: { scaleFactor: 1.2, verticalOffset: '-0.125em' },  // DevIcons tend to be smaller
   Fa: { scaleFactor: 1 },  // Font Awesome is our baseline
-  Si: { scaleFactor: 1.1 }, // Simple Icons slightly smaller
+  Si: { scaleFactor: 1 }, // Simple Icons slightly smaller
   Ai: { scaleFactor: 1 },  // Ant Design Icons
   Vsc: { scaleFactor: 1.1 }, // VS Code Icons
-  Bi: { scaleFactor: 1.1 }  // Bootstrap Icons
+  Bi: { scaleFactor: 1.1 },  // Bootstrap Icons
+  Pi: { scaleFactor: 1.1 }  // Bootstrap Icons
 };
 
 interface FileIconMapping {
@@ -77,6 +79,8 @@ export const fileIconMappings: { [key: string]: FileIconMapping } = {
     'xml': { icon: AiFillFileText, color: '#000000' },
     'graphql': { icon: SiGraphql, color: '#e10098' },
     'gql': { icon: SiGraphql, color: '#e10098' },
+    'env': { icon: PiGearFill, color: '#9ca3af' },
+    'env.local': { icon: PiGearFill, color: '#9ca3af' },
   
     // Documentation
     'md': { icon: SiMarkdown, color: '#000000' },
