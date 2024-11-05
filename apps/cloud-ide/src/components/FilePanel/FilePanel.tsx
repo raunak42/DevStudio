@@ -68,29 +68,27 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
       <div className="w-full flex items-center justify-between px-6 mt-4">
         <h1 className="text-base font-medium text-green-700">Files</h1>
         <div className="flex items-center justify-center gap-1 h-[32px]">
-          <div className="hover:bg-[#86EFAC25] cursor-pointer rounded-lg p-[6px]">
-            <FilePlus
-              onClick={() => {
-                setShowInput({
-                  show: true,
-                  inputFor: "file",
-                });
-              }}
-              size={17}
-              className="stroke-[1.6px] text-green-800"
-            />
+          <div
+            onClick={() => {
+              setShowInput({
+                show: true,
+                inputFor: "file",
+              });
+            }}
+            className="hover:bg-[#86EFAC25] cursor-pointer rounded-lg p-[6px]"
+          >
+            <FilePlus size={17} className="stroke-[1.6px] text-green-800" />
           </div>
-          <div className="hover:bg-[#86EFAC25] cursor-pointer rounded-lg p-[6px] mt-[2px]">
-            <FolderPlus
-              onClick={() => {
-                setShowInput({
-                  show: true,
-                  inputFor: "dir",
-                });
-              }}
-              size={17}
-              className="stroke-[1.6px] text-green-800 "
-            />
+          <div
+            onClick={() => {
+              setShowInput({
+                show: true,
+                inputFor: "dir",
+              });
+            }}
+            className="hover:bg-[#86EFAC25] cursor-pointer rounded-lg p-[6px] mt-[2px]"
+          >
+            <FolderPlus size={17} className="stroke-[1.6px] text-green-800 " />
           </div>
         </div>
       </div>
