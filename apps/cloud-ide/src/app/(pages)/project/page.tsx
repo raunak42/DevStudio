@@ -1,8 +1,7 @@
 "use client";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { API_BASE_URL } from "@/lib/constants";
+import { useCallback, useRef, useState } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { HiOutlineMinus } from "react-icons/hi2";
 import { TerminalPanel } from "@/components/TerminalPanel";
@@ -12,6 +11,14 @@ import { FilePanel } from "@/components/FilePanel/FilePanel";
 import Loading from "./loading";
 import { useRecoilValue } from "recoil";
 import { HomeClickedState } from "@/store";
+import { entity } from "@/components/FilePanel/types";
+import {
+  useDisconnectViaButton,
+  useFixScroll,
+  useLoadedEvent,
+  useSocket,
+} from "./hooks";
+import { getRandomNumber } from "./helpers";
 
 export interface Terminal {
   terminalId: string;
@@ -24,7 +31,7 @@ export default function Page() {
   const [terminals, setTerminals] = useState<Terminal[]>([]);
   const [activeTerminalId, setActiveTerminalId] = useState<string>("");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [filesLoaded, setFilesLoaded] = useState<boolean>(false);
+  const [files, setFiles] = useState<entity[] | null>();
 
   const params = useSearchParams();
   const userId = params.get("userId");
@@ -43,61 +50,19 @@ export default function Page() {
     setActiveTerminalId(terminalId);
   }, [socket, userId]);
 
-  useEffect(() => {
-    const newSocket = io(
-      `${API_BASE_URL}?userId=${userId}&projectId=${projectId}`
-    );
-    setSocket(newSocket);
+  useSocket({ projectId, setSocket, userId });
+  useLoadedEvent({ addNewTerminal, setFiles, socket });
+  useFixScroll({ scrollContainerRef, terminals });
+  useDisconnectViaButton({ socket, homeButtonClicked });
 
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [projectId, userId]);
-
-  useEffect(() => {
-    if (!socket) return;
-    socket.on("files-loaded", (data) => {
-      if (data.loaded === true) {
-        setFilesLoaded(true);
-        addNewTerminal();
-      }
-    });
-  }, [socket, addNewTerminal]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("connect", () => {
-        console.log("Connected to server");
-      });
-
-      socket.on("disconnect", () => {
-        console.log("Disconnected from server");
-      });
-    }
-  });
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft =
-        scrollContainerRef.current.scrollWidth;
-    }
-  }, [terminals]);
-
-  useEffect(() => {
-    if (!socket) return;
-    if (homeButtonClicked) {
-      socket.disconnect();
-    }
-  }, [homeButtonClicked, socket]);
-
-  if (!filesLoaded) {
+  if (!files) {
     return <Loading />;
   }
 
   return (
     <div className="h-screen-minus-nav">
       <PanelGroup direction="horizontal">
-        <FilePanel socket={socket} />
+        <FilePanel rootContent={files} socket={socket} />
         <PanelResizeHandle className="group flex flex-col items-center justify-center  group  w-[4px] bg-gray-200">
           <HiOutlineMinus
             className="stroke-[1px] text-gray-400 group-hover:text-gray-800 rotate-90"
@@ -135,10 +100,3 @@ export default function Page() {
     </div>
   );
 }
-
-const getRandomNumber = (min: number, max: number) => {
-  const range = max - min + 1;
-  const randomBuffer = new Uint32Array(1);
-  crypto.getRandomValues(randomBuffer);
-  return min + (randomBuffer[0] % range);
-};
