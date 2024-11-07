@@ -7,10 +7,16 @@ import { IoIosAdd } from "react-icons/io";
 import { generateSlug } from "random-word-slugs";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useUser } from "@clerk/nextjs";
-import { createProjectProps } from "@/app/api/createProject/route";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { API_BASE_URL } from "@/lib/constants";
+
+interface createProjectProps {
+  userId: string;
+  framework: string;
+  title: string;
+  projectId: string;
+}
 
 interface CreateProjectModalProps {
   showModal: boolean;

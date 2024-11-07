@@ -17,7 +17,10 @@ export const httpHandler = (app: Express) => {
         const body: createProjectProps = req.body;
         const { message, status } = await copyS3Folder(body.framework, body.userId, body.projectId)
         console.log({ message, status })
-        
-        res.json({ userId: body.userId, projectId: body.projectId })
+        if (status === 200) {
+            res.json({ userId: body.userId, projectId: body.projectId })
+        } else {
+            res.json({ message, status })
+        }
     })
 }

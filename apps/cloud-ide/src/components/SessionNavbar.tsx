@@ -7,13 +7,13 @@ import { House } from "lucide-react";
 import { BiSolidRightArrow } from "react-icons/bi";
 import Image from "next/image";
 import { Button } from "./Button";
-import Link from "next/link";
 import { useSetRecoilState } from "recoil";
 import { HomeClickedState } from "@/store";
+import { useRouter } from "next/navigation";
 
 export const SessionNavbar: React.FC = () => {
-  const setHomeCLicked = useSetRecoilState(HomeClickedState);
-
+  const setHomeClicked = useSetRecoilState(HomeClickedState);
+  const router = useRouter();
   const params = useSearchParams();
   const projectId = params.get("projectId");
 
@@ -23,12 +23,23 @@ export const SessionNavbar: React.FC = () => {
   const workspace = projectId.split("-")[1];
   const logoSrc = templates.find((t) => t.framework === framework)!.logo;
 
+  const setHomeClickedTrue = async () => {
+    await new Promise((resolve) => {
+      resolve(setHomeClicked(true));
+    });
+  };
+
+  const handleClick = async () => {
+    await setHomeClickedTrue;
+    router.push("/dashboard");
+  };
+
   return (
     <div className="h-12 w-full px-6 gap-16 grid grid-cols-3 z-20 border-b bg-white/80 backdrop-blur-sm">
       <div className="flex items-center justify-start gap-3 col-span-1">
-        <Link href={"/dashboard"} onClick={() => setHomeCLicked(true)}>
+        <div className="cursor-pointer" onClick={handleClick}>
           <House size={20} className="stroke-[1.5px] text-gray-800" />
-        </Link>
+        </div>
         <Image
           src={logoSrc}
           alt={framework}
