@@ -1,6 +1,7 @@
 import chokidar from 'chokidar';
 import { Socket } from 'socket.io';
 import { addNewToS3, deleteFromS3 } from './aws';
+import { ignored } from './ignored';
 
 const modifyPathForClient = (path: string) => {
     const pathArray = path.split("workspace")
@@ -22,7 +23,8 @@ export function watchDirectory(directoryPath: string, socket: Socket | null) {
 
     const watcher = chokidar.watch(directoryPath, {
         persistent: true,
-        ignoreInitial: true
+        ignoreInitial: true,
+        ignored: ignored,
     });
 
     const events = ['add', 'addDir', 'unlink', 'unlinkDir']
@@ -47,10 +49,6 @@ export function watchDirectory(directoryPath: string, socket: Socket | null) {
             }
         })
 
-    })
-
-    watcher.on('all', (event, path) => {
-        console.log(event)
     })
 
     watcher.on('error', error => {
