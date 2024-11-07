@@ -17,28 +17,29 @@ const s3Client = new S3Client({
     region: 'eu-central-1',
 });
 
-export const addNewToS3 = async (path: string) => {
+export const addNewToS3 = async ({ path, type }: { path: string; type: "file" | "dir" }) => {
+    const key = type === "dir" ? `${path}/` : path
     try {
         const upload = new Upload({
             client: s3Client,
             params: {
                 Bucket: process.env.S3_BUCKET,
-                Key: path,
+                Key: key,
                 Body: "",
             }
         })
-
         await upload.done()
     } catch (err) {
         console.error(err)
     }
 }
 
-export const deleteFromS3 = async (path: string) => {
+export const deleteFromS3 = async ({ path, type }: { path: string; type: "file" | "dir" }) => {
+    const key = type === "dir" ? `${path}/` : path
     try {
         const params = {
             Bucket: process.env.S3_BUCKET,
-            Key: path,
+            Key: key,
         }
         const deleteCommand = new DeleteObjectCommand(params)
         await s3Client.send(deleteCommand)
@@ -116,27 +117,36 @@ export const fetchS3Folder = async (key: string, localPath: string) => {
                 status: 404
             }
         }
+
         await Promise.all(listedObjects.Contents.map(async (file) => {
             if (!file.Key) return
-            const getObjectParams: GetObjectCommandInput = {
-                Bucket: bucket,
-                Key: file.Key
-            }
-            const getObjectsCommand = new GetObjectCommand(getObjectParams);
-            const data: GetObjectOutput = await s3Client.send(getObjectsCommand)
-            if (!data) return
-            const streamToBuffer = async (stream: any): Promise<Buffer> => {
-                const chunks: Buffer[] = [];
-                return new Promise((resolve, reject) => {
-                    stream.on('data', (chunk: Buffer) => chunks.push(chunk));
-                    stream.on('error', reject);
-                    stream.on('end', () => resolve(Buffer.concat(chunks)));
-                });
-            };
-
-            const fileData = await streamToBuffer(data.Body);
             const filePath = `${localPath}/${file.Key.replace(key, "")}`;
-            await writeFile(filePath, fileData);
+
+            if (file.Key.endsWith('/')) { //It means it is a folder.
+                await createFolder(filePath);
+                return;
+            } else {  //Not a folder, a file.
+                const getObjectParams: GetObjectCommandInput = {
+                    Bucket: bucket,
+                    Key: file.Key
+                }
+                const getObjectsCommand = new GetObjectCommand(getObjectParams);
+                const data: GetObjectOutput = await s3Client.send(getObjectsCommand)
+                if (!data) return
+
+                const streamToBuffer = async (stream: any): Promise<Buffer> => {
+                    const chunks: Buffer[] = [];
+                    return new Promise((resolve, reject) => {
+                        stream.on('data', (chunk: Buffer) => chunks.push(chunk));
+                        stream.on('error', reject);
+                        stream.on('end', () => resolve(Buffer.concat(chunks)));
+                    });
+                };
+
+                const fileData = await streamToBuffer(data.Body);
+
+                await writeFile(filePath, fileData);
+            }
         }))
 
         return {
