@@ -6,7 +6,7 @@ import path from "path";
 import { fetchDir } from "./fs";
 import { watchDirectory } from "./watcher";
 import { newPtyProcess, skipInitOutputs, writeInitCommands } from "./terminal";
-import fs, { FSWatcher } from "fs"
+import fs, { FSWatcher } from "fs";
 
 export interface Terminal {
     ptyProcess: ReturnType<typeof spawn>;
@@ -24,22 +24,24 @@ export const socketHandler = (httpServer: HttpServer) => {
 
     io.on("connection", async (socket: Socket) => {
         console.log("A client connected to", socket.id);
-        const watcher = watchDirectory(path.join(__dirname, "..", "workspace"), socket);
+
 
         const userId = socket.handshake.query.userId
         const projectId = socket.handshake.query.projectId as string
 
         const workspaceLocation = path.join(__dirname, `../workspace/${projectId.split("-")[1]}`)
-        initEventHandlers(socket, workspaceLocation, watcher)
         const res = await fetchS3Folder(`user/${userId}/${projectId}`, workspaceLocation);
         if (res.status === 200) {
             const rootContent = await fetchDir(workspaceLocation, "")
             socket.emit("files-loaded", ({ rootContent, loaded: true }))
+            //Start watcher only after the files are loaded in the file system, else the files while loading will be watcher and watcher events will trigger and put newly fetched files back into s3, which were just fetched.
+            const watcher = watchDirectory(path.join(__dirname, "..", "workspace"), socket);
+            initEventHandlers(socket, workspaceLocation, watcher, userId as string, projectId)
         }
     });
 }
 
-const initEventHandlers = (socket: Socket, workspaceLocation: string, watcher: FSWatcher | undefined) => {
+const initEventHandlers = (socket: Socket, workspaceLocation: string, watcher: FSWatcher | undefined, userId: string, projectId: string) => {
     let terminals: Terminal[] = [];
 
     socket.on("requestPty", async (terminalId: string) => {
@@ -177,10 +179,9 @@ export interface entity {
 }
 
 const closeWatcher = async (watcher: FSWatcher) => {
-    await new Promise((resolve) => {
-        resolve(
-            watcher.close()
-        )
+    await new Promise<void>((resolve) => {
+        watcher.close()
         console.log("Watcher stopped.")
+        resolve()
     })
 }
