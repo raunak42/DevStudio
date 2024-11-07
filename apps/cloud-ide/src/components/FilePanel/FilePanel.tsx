@@ -3,15 +3,15 @@ import { useEffect, useRef, useState } from "react";
 import { Panel } from "react-resizable-panels";
 import { Socket } from "socket.io-client";
 import { entity } from "./types";
-import { getRootContents } from "./helpers";
 import { Entity } from "./Entity";
 
 export interface FilePanelProps {
   socket: Socket | null;
+  rootContent:entity[]
 }
 
-export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
-  const [allEntities, setAllEntities] = useState<entity[]>([]);
+export const FilePanel: React.FC<FilePanelProps> = ({ socket,rootContent }) => {
+  const [allEntities, setAllEntities] = useState<entity[]>(rootContent);
   const [openFolders, setOpenFolders] = useState<string[]>([]);
 
   const [newEntityName, setNewEntityName] = useState<string>("");
@@ -23,10 +23,6 @@ export const FilePanel: React.FC<FilePanelProps> = ({ socket }) => {
     inputFor: "",
   });
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    getRootContents({ socket, setAllEntities });
-  }, [socket]);
 
   const handleSend = () => {
     if (!socket || !showInput.inputFor || !showInput.show) return;
