@@ -35,20 +35,15 @@ export const newPtyProcess = (workspaceLocation: string) => {
 
 export const writeInitCommands = async (ptyProcess: IPty, workspaceName: string) => {
     await new Promise<void>((resolve) => {
-        // Disable echo
         ptyProcess.write('stty -echo\n');
         ptyProcess.write('\x1b[2J\x1b[H\n');
         ptyProcess.write('unset PROMPT_COMMAND\n');
-        // Custom prompt
         ptyProcess.write(`PS1="\\[\\033[01;32m\\]${workspaceName}~\\[\\033[00m\\]$ "\n`);
-        // Color
         ptyProcess.write('export CLICOLOR=1\n');
         ptyProcess.write('export LSCOLORS=ExFxBxDxCxegedabagacad\n');
         ptyProcess.write('alias ls="ls --color=auto"\n');
         ptyProcess.write('alias grep="grep --color=auto"\n');
-        // Clear screen after .write()
         ptyProcess.write('\x1b[2J\x1b[H\n');
-        // Enable echo for user
         ptyProcess.write('stty echo\n');
         resolve()
     })
@@ -62,8 +57,6 @@ export const skipInitOutputs = (newTerminal: Terminal, socket: Socket) => { //Fo
             isFirstOutput = false;
             return;
         }
-
-        // Skip the outputs that contain initial setup commands.
         if (
             data.includes('stty') ||
             data.includes('export') ||
