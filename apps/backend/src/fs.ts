@@ -1,7 +1,7 @@
 import fs from "fs";
 
-interface Entry { //File system entry is the common name for files and directories.
-    type: string;
+export interface Entry { //File system entry is the common name for files and directories.
+    type: "dir"|"file";
     name: string;
     path: string
 }
