@@ -26,9 +26,9 @@ export const fetchDir = async (dir: string, baseDir: string): Promise<Entry[]> =
     })
 }
 
-export const fetchFileContent = async (file: string): Promise<string> => {
+export const fetchFileContent = async (filePath: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-        fs.readFile(file, "utf8", (err, data) => {
+        fs.readFile(filePath, "utf8", (err, data) => {
             if (err) {
                 reject(err)
             } else {
