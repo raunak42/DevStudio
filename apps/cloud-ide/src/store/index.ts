@@ -1,3 +1,4 @@
+import { entity } from "@/components/FilePanel/types";
 import { atom } from "recoil";
 
 export const ScrollToState = atom({
@@ -17,6 +18,15 @@ export const CloseTermState = atom({
 })
 
 export const HomeClickedState = atom<boolean>({
-    key:"HomeClickedState",
-    default:false
+    key: "HomeClickedState",
+    default: false
+})
+
+export const fileState = atom<{ content: string | null, language: string | null, entity: entity | null }>({
+    key: "fileState",
+    default: {
+        content: null,
+        language: null,
+        entity: null
+    }
 })
