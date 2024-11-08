@@ -17,7 +17,7 @@ export const useTheme = () => {
           { token: "number", foreground: "C026D3", fontStyle: "bold" },
           { token: "type", foreground: "7C3AED", fontStyle: "bold" },
           { token: "function", foreground: "047857" },
-          { token: "identifier", foreground: "0950A1" },           // Rich navy
+          { token: "identifier", foreground: "0950A1" },          
           { token: "identifier.variable", foreground: "0950A1" },
           { token: "identifier.variable.readonly", foreground: "0950A1" },
           { token: "variable.readonly", foreground: "0950A1" },

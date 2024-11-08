@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { clickDir } from "./helpers";
+import { handleDirClick, handleFileClick } from "./helpers";
 import { useWatcher } from "./hooks";
 import { EntityConponentProps } from "./types";
 import { Folder, FolderOpen } from "lucide-react";
@@ -7,6 +7,8 @@ import { FileIcon } from "./FileIcons";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useRef, useState, useEffect } from "react";
 import { EntityMenu } from "./EntityMenu";
+import { useSetRecoilState } from "recoil";
+import { fileState } from "@/store";
 
 export const Entity: React.FC<EntityConponentProps> = ({
   entity,
@@ -18,6 +20,7 @@ export const Entity: React.FC<EntityConponentProps> = ({
   setOpenFolders,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const setFile = useSetRecoilState(fileState);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
 
@@ -57,14 +60,16 @@ export const Entity: React.FC<EntityConponentProps> = ({
     e.preventDefault();
     if (e.type === "contextmenu") {
       setIsMenuOpen((prev) => !prev);
-    } else {
-      clickDir({
+    } else if (entity.type === "dir") {
+      handleDirClick({
         entity,
         setAllEntities,
         socket,
         openFolders,
         setOpenFolders,
       });
+    } else if (entity.type === "file") {
+      handleFileClick({ entity, socket, setFile });
     }
   };
 
@@ -83,7 +88,7 @@ export const Entity: React.FC<EntityConponentProps> = ({
         onClick={(e) => handleClick(e as unknown as MouseEvent)}
         onContextMenu={(e) => handleClick(e as unknown as MouseEvent)}
         className={cn(
-          "relative group h-[28px] shrink-0 cursor-pointer w-full flex flex-row items-center justify-between hover:bg-[#86EFAC25] rounded-md pl-2",
+          "relative group h-[28px] shrink-0 cursor-pointer w-full flex flex-row items-center justify-between hover:bg-[#86EFAC25] rounded-md pl-2"
         )}
         title={entity.name}
       >
@@ -115,7 +120,10 @@ export const Entity: React.FC<EntityConponentProps> = ({
             {entity.name}
           </h1>
         </div>
-        <div ref={buttonRef} className="w-[32px] h-full flex-shrink-0 flex items-center justify-center rounded-r-md overflow-clip">
+        <div
+          ref={buttonRef}
+          className="w-[32px] h-full flex-shrink-0 flex items-center justify-center rounded-r-md overflow-clip"
+        >
           <HiOutlineDotsVertical
             onClick={(e) => {
               e.stopPropagation();
@@ -130,7 +138,11 @@ export const Entity: React.FC<EntityConponentProps> = ({
             ref={menuRef}
             className="z-20 absolute h-[200%] w-full flex items-start justify-start top-8 left-4"
           >
-            <EntityMenu setIsMenuOpen={setIsMenuOpen} socket={socket} entity={entity} />
+            <EntityMenu
+              setIsMenuOpen={setIsMenuOpen}
+              socket={socket}
+              entity={entity}
+            />
           </div>
         )}
       </div>
