@@ -23,12 +23,21 @@ export interface getRootContentsProps {
     setAllEntities: Dispatch<SetStateAction<entity[]>>
 }
 
-export interface clickDirProps {
+export interface handleDirClickProps {
     socket: Socket | null;
     entity: entity;
     setAllEntities: Dispatch<SetStateAction<entity[]>>;
     openFolders: string[];
     setOpenFolders: Dispatch<SetStateAction<string[]>>
+}
+
+export interface handleFileClickProps {
+    socket: Socket | null;
+    entity: entity;
+    setFile:SetterOrUpdater<{
+        content: string;
+        language: string;
+    }>
 }
 
 export interface watcherAddDirProps {

@@ -1,9 +1,11 @@
 // helpers.ts
+import { extensionMap } from "@/lib/constants";
 import {
-    clickDirProps,
     entity,
     getFreshDataProps,
-    getRootContentsProps
+    getRootContentsProps,
+    handleDirClickProps,
+    handleFileClickProps
 } from "./types";
 
 export const findEntityByPath = (
@@ -31,7 +33,6 @@ export const getRootContents = async ({
     try {
         socket.emit("getDirContents", "/", (entityContents: entity[]) => {
             setAllEntities((prev) => {
-                // Create a map of existing entities with their children for quick lookup
                 const prevEntityMap = new Map<string, entity>();
                 const mapEntities = (entities: entity[]) => {
                     entities.forEach(entity => {
@@ -43,7 +44,6 @@ export const getRootContents = async ({
                 };
                 mapEntities(prev);
 
-                // Update new entities with existing children if available
                 const updatedContents = entityContents.map(newEntity => {
                     const prevEntity = prevEntityMap.get(newEntity.path);
                     if (prevEntity?.children) {
@@ -69,7 +69,6 @@ export const getFreshData = async ({
 
     try {
         socket.emit("getDirContents", entity.path, (entityContents: entity[]) => {
-            // Update paths for all children
             entityContents.forEach(
                 (childEntity) => {
                     childEntity.path = `${entity.path}/${childEntity.name}`;
@@ -77,7 +76,6 @@ export const getFreshData = async ({
             );
 
             setAllEntities((prev: entity[]) => {
-                // Create a map of all existing entities with their children
                 const prevEntityMap = new Map<string, entity>();
                 const mapEntities = (entities: entity[]) => {
                     entities.forEach(entity => {
@@ -92,7 +90,6 @@ export const getFreshData = async ({
                 const modifyEntities = (entities: entity[]): entity[] => {
                     return entities.map((prevEntity) => {
                         if (prevEntity.path === entity.path) {
-                            // For the directory being refreshed, merge new content with existing children
                             const updatedChildren = entityContents.map(newChild => {
                                 const existingChild = prevEntityMap.get(`${entity.path}/${newChild.name}`);
                                 if (existingChild?.children) {
@@ -127,13 +124,13 @@ export const getFreshData = async ({
 };
 
 
-export const clickDir = ({
+export const handleDirClick = ({
     entity,
     setAllEntities,
     setOpenFolders,
     openFolders,
     socket,
-}: clickDirProps) => {
+}: handleDirClickProps) => {
     if (!socket || entity.type !== "dir") return;
 
     if (openFolders.includes(entity.path)) {
@@ -144,23 +141,39 @@ export const clickDir = ({
     }
 };
 
-export function sortEntities(entities: entity[]): entity[] {
-  // First, move all entities with names starting with "." to the end
-  const [regularEntities, hiddenEntities] = entities.reduce(
-    ([regular, hidden], entity) => {
-      if (entity.name.startsWith('.')) {
-        return [regular, [...hidden, entity]];
-      } else {
-        return [[...regular, entity], hidden];
-      }
-    },
-    [[] as entity[], [] as entity[]]
-  );
-
-  // Then, sort the remaining entities into directories and files, with dirs first
-  return [...regularEntities.sort((a, b) => {
-    if (a.type === 'dir' && b.type === 'file') return -1;
-    if (a.type === 'file' && b.type === 'dir') return 1;
-    return a.name.localeCompare(b.name);
-  }), ...hiddenEntities];
+export const handleFileClick = ({ socket, entity, setFile }: handleFileClickProps) => {
+    if (!socket || entity.type !== "file") return;
+    const extension = entity.name.split(".").pop()!
+    const language = extensionToLanguageName(extension)
+    socket.emit("getFileContent", entity.path, (content: string) => {
+        setFile({
+            content: content,
+            language: language,
+            entity: entity
+        })
+    })
 }
+
+export function sortEntities(entities: entity[]): entity[] {
+    const [regularEntities, hiddenEntities] = entities.reduce(
+        ([regular, hidden], entity) => {
+            if (entity.name.startsWith('.')) {
+                return [regular, [...hidden, entity]];
+            } else {
+                return [[...regular, entity], hidden];
+            }
+        },
+        [[] as entity[], [] as entity[]]
+    );
+
+    return [...regularEntities.sort((a, b) => {
+        if (a.type === 'dir' && b.type === 'file') return -1;
+        if (a.type === 'file' && b.type === 'dir') return 1;
+        return a.name.localeCompare(b.name);
+    }), ...hiddenEntities];
+}
+
+const extensionToLanguageName = (extension: string) => {
+    const languageName = extensionMap[extension.toLowerCase()] || "plaintext";
+    return languageName;
+};
