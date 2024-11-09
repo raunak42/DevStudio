@@ -1,6 +1,6 @@
 import chokidar from 'chokidar';
 import { Socket } from 'socket.io';
-import { addNewToS3, deleteFromS3 } from './aws';
+import { addNewToS3, deleteFromS3, readFile, updateFileInS3 } from './aws';
 import { ignored } from './ignored';
 
 const modifyPathForClient = (path: string) => {
@@ -27,7 +27,7 @@ export function watchDirectory(directoryPath: string, socket: Socket | null) {
         ignored: ignored,
     });
 
-    const events = ['add', 'addDir', 'unlink', 'unlinkDir']
+    const events = ['add', 'addDir', 'unlink', 'unlinkDir', 'change']
 
     events.map((event) => {
         watcher.on(event, async (path) => {
@@ -47,10 +47,14 @@ export function watchDirectory(directoryPath: string, socket: Socket | null) {
             else if (event === "unlinkDir") {
                 await deleteFromS3({ path: pathForS3, type: "dir" })
             }
+            else if (event === "change") {
+                const content = await readFile(path)
+                await updateFileInS3({ path: pathForS3, content: content })
+            }
         })
 
     })
-
+    
     watcher.on('error', error => {
         console.error('Error occurred', error);
     });
