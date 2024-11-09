@@ -7,8 +7,24 @@ import { fileState } from "@/store";
 import { useEffect } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { File } from "lucide-react";
+import { Socket } from "socket.io-client";
 
-export const CodePanel: React.FC = () => {
+const debounce = (fn: (value: string | undefined) => void, wait: number) => {
+  let timeout: NodeJS.Timeout;
+
+  return (value: string | undefined) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      fn(value);
+    }, wait);
+  };
+};
+
+interface CodePanelProps {
+  socket: Socket | null;
+}
+
+export const CodePanel: React.FC<CodePanelProps> = ({ socket }) => {
   const file = useRecoilValue(fileState);
   useTheme();
 
@@ -39,7 +55,7 @@ export const CodePanel: React.FC = () => {
     <Panel className="flex flex-col " defaultSize={46}>
       {path && (
         <>
-          <div className="w-full h-[38px] flex items-center  justify-start px-4 ">
+          <div className="w-full h-[32px] flex items-center  justify-start px-4 shadow-2xl border-b ">
             {pathArray.map((t, index) => {
               return (
                 <div key={index} className="flex flex-row items-center">
@@ -50,13 +66,16 @@ export const CodePanel: React.FC = () => {
                 </div>
               );
             })}
-            {/* {!path && <h1 className="text-sm text-gray-500">Select a file</h1>} */}
           </div>
           {file.content && file.language && (
             <Editor
               height="100vh"
               value={file.content}
               language={file.language}
+              onChange={debounce((value) => {
+                if (value === undefined || !socket) return;
+                socket.emit("updateFileContent", { path, value });
+              }, 500)}
               theme="spring-garden"
               options={{
                 minimap: {
