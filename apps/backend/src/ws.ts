@@ -3,7 +3,7 @@ import { type Server as HttpServer } from "http";
 import { spawn } from "node-pty";
 import { fetchS3Folder } from "./aws";
 import path from "path";
-import { fetchDir, fetchFileContent } from "./fs";
+import { fetchDir, fetchFileContent, updateFileContent } from "./fs";
 import { watchDirectory } from "./watcher";
 import { newPtyProcess, skipInitOutputs, writeInitCommands } from "./terminal";
 import fs, { FSWatcher } from "fs";
@@ -156,10 +156,15 @@ const initEventHandlers = (socket: Socket, workspaceLocation: string, watcher: F
         }
     })
 
-    socket.on("getFileContent", async(path: string, callBack) => {
+    socket.on("getFileContent", async (path: string, callBack) => {
         const filePath = workspaceLocation + path
         const content = await fetchFileContent(filePath)
         callBack(content)
+    })
+
+    socket.on("updateFileContent", ({ path, value }: { path: string; value: string }) => {
+        const filePath = workspaceLocation + path
+        updateFileContent(filePath, value)
     })
 
     socket.on("disconnect", async () => {
