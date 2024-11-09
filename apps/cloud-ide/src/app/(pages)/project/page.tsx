@@ -69,7 +69,7 @@ export default function Page() {
             size={40}
           />
         </PanelResizeHandle>
-        <CodePanel />
+        <CodePanel socket={socket} />
         <PanelResizeHandle className="group flex flex-col items-center justify-center  group  w-[4px] bg-gray-200">
           <HiOutlineMinus
             className="stroke-[1px] text-gray-400 group-hover:text-gray-800 rotate-90"
