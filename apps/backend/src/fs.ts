@@ -1,7 +1,7 @@
 import fs from "fs";
 
 export interface Entry { //File system entry is the common name for files and directories.
-    type: "dir"|"file";
+    type: "dir" | "file";
     name: string;
     path: string
 }
@@ -35,5 +35,13 @@ export const fetchFileContent = async (filePath: string): Promise<string> => {
                 resolve(data)
             }
         })
+    })
+}
+
+export const updateFileContent = (filePath: string, content: string) => {
+    fs.writeFile(filePath, content, (err) => {
+        if (err) {
+            console.error(err)
+        }
     })
 }
