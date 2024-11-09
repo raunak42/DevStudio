@@ -17,6 +17,7 @@ const s3Client = new S3Client({
     region: 'eu-central-1',
 });
 
+
 export const addNewToS3 = async ({ path, type }: { path: string; type: "file" | "dir" }) => {
     const key = type === "dir" ? `${path}/` : path
     try {
@@ -45,6 +46,23 @@ export const deleteFromS3 = async ({ path, type }: { path: string; type: "file" 
         await s3Client.send(deleteCommand)
     } catch (error) {
         console.error(error)
+    }
+}
+
+export const updateFileInS3 = async ({ path, content }: { path: string, content: string }) => {
+    const key = path
+    try {
+        const upload = new Upload({
+            client: s3Client,
+            params: {
+                Bucket: process.env.S3_BUCKET,
+                Key: key,
+                Body: content,
+            }
+        })
+        await upload.done()
+    } catch (err) {
+        console.error(err)
     }
 }
 
@@ -175,6 +193,18 @@ function writeFile(filePath: string, fileData: Buffer): Promise<void> {
             }
         })
     });
+}
+
+export function readFile(filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(data.toString())
+            }
+        })
+    })
 }
 
 function createFolder(dirName: string) {
